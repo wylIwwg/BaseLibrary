@@ -21,10 +21,16 @@ public class ToastUtils {
         if (mToast != null)
             mToast.setText(text);
         else
-            mToast = Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
+            mToast = Toast.makeText(mContext, text, Toast.LENGTH_LONG);
         mHandler.postDelayed(r, duration);
         mToast.show();
     }
 
+    public static void clearTasot() {
+        if (mHandler != null && mToast != null) {
+            mHandler.removeCallbacks(r);
+            mToast = null;
+        }
+    }
 
 }

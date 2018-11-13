@@ -8,10 +8,25 @@ import android.util.Log;
 
 public class LogUtils {
 
-    static boolean isDebug = true;
+    static boolean showLog = true;
+    static int LOG_MAX_LENGTH = 2000;
 
     public static void e(String tag, String msg) {
-        if (isDebug)
-            Log.e(tag, msg);
+        if (showLog) {
+            int strLength = msg.length();
+            int start = 0;
+            int end = LOG_MAX_LENGTH;
+            for (int i = 0; i < 100; i++) {
+                if (strLength > end) {
+                    Log.e(tag + i, msg.substring(start, end));
+                    start = end;
+                    end = end + LOG_MAX_LENGTH;
+                } else {
+                    Log.e(tag + i, msg.substring(start, strLength));
+                    break;
+                }
+
+            }
+        }
     }
 }

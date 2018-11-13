@@ -1,1 +1,1 @@
-include ':base-android', ':testbase'
+include ':base-android', ':BaseDemo'

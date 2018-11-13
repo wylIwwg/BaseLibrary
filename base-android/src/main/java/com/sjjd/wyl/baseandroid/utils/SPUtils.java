@@ -32,13 +32,12 @@ public class SPUtils {
 
     public SPUtils putDIYInt(String key, int value) {
 
-        sp.edit().putInt(key, value).apply()
-        ;
+        sp.edit().putInt(key, value).apply();
         return mSPUtils;
     }
 
     public String getDIYString(String key) {
-        return sp.getString(key, null);
+        return sp.getString(key, "");
     }
 
     public boolean getDIYBoolean(String key) {

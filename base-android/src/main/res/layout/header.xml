@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/llTopBar"
+    android:id="@+id/rlTopBar"
     android:layout_width="match_parent"
     android:layout_height="78px"
     android:orientation="horizontal">
@@ -18,20 +18,32 @@
         android:id="@+id/tvBack"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
+        android:layout_toRightOf="@id/imgBack"
+        android:gravity="center"
         android:paddingLeft="20px"
-        android:text="Return"
+        android:text="@string/back"
         android:textColor="#212121"
         android:textSize="24px"/>
 
     <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="0dp"
+
+        android:id="@+id/tvTitleLeft"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginLeft="50px"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
+        android:layout_toRightOf="@id/tvBack"
+        android:gravity="center"
         android:textColor="#212121"
         android:textSize="24px"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tvTitleMiddle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="50px"
+        android:gravity="center"
+        android:textColor="#212121"
+        android:textSize="24px"/>
+
+</RelativeLayout>

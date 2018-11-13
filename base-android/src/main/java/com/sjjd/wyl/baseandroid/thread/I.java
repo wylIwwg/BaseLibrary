@@ -14,4 +14,8 @@ public interface I {
     int UNKNOWN_ERROR = 250;//未知错误
     int TIMEOUT = 201;//请求超时
 
+    interface SP {
+        String IP = "ip";
+        String WINDOW_NUM="window_num";
+    }
 }
