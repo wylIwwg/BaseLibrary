@@ -1,9 +1,5 @@
 package com.sjjd.wyl.baseandroid;
 
-import android.content.Context;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-
 /**
  * Created by wyl on 2018/11/13.
  */

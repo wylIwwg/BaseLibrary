@@ -9,8 +9,6 @@ import android.os.SystemClock;
 import com.lzy.okgo.OkGo;
 
 
-
-
 /**
  * Created by wyl on 2018/4/24.
  */
@@ -27,8 +25,8 @@ public abstract class BaseThread extends Thread {
     public int call_times = 0;//网络状态异常请求次数
     public int CALL_TIMES = 3;
 
-    Handler mHandler;//通知线程
-    Context mContext;
+    public Handler mHandler;//通知线程
+    public Context mContext;
 
     private Object lock = new Object();
 

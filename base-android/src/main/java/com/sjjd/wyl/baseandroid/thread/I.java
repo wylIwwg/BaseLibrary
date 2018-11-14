@@ -13,9 +13,10 @@ public interface I {
     int SERVER_ERROR = 400;//服务器错误
     int UNKNOWN_ERROR = 250;//未知错误
     int TIMEOUT = 201;//请求超时
+    int TIME_CHANGED = 10001;//时间
 
     interface SP {
         String IP = "ip";
-        String WINDOW_NUM="window_num";
+        String WINDOW_NUM = "window_num";
     }
 }
