@@ -131,10 +131,6 @@ public class BaseActivity extends AppCompatActivity {
             super.handleMessage(msg);
             //常用消息处理
             switch (msg.what) {
-                case I.LOAD_DATA_SUCCESS:
-                    break;
-                case I.LOAD_DATA_FAILD:
-                    break;
                 case I.NET_ERROR:
                 case I.SERVER_ERROR:
                 case I.UNKNOWN_ERROR:

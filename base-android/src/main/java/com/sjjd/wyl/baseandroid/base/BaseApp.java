@@ -24,7 +24,6 @@ public class BaseApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        initOkGO();
     }
 
     public void initBugly(String key) {
@@ -48,7 +47,7 @@ public class BaseApp extends Application {
     }
 
 
-    private void initOkGO() {
+    public void initOkGO() {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         //log相关
