@@ -18,5 +18,6 @@ public interface I {
     interface SP {
         String IP = "ip";
         String WINDOW_NUM = "window_num";
+        String PORT = "port";
     }
 }

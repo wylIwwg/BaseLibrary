@@ -162,9 +162,17 @@ public class BaseActivity extends AppCompatActivity {
         ToastUtils.clearTasot();
     }
 
+    /**
+     *
+     * @param anchor
+     * @param bgColor
+     * @param txtColor
+     * @param etbg
+     * @param btnbg
+     */
     public void showSettingPop(View anchor, int bgColor, int txtColor, int etbg, int btnbg) {
 
-        View view = View.inflate(this, R.layout.pop_setting, null);
+        View view = View.inflate(mContext, R.layout.pop_setting, null);
         final PopupWindow pop = new PopupWindow(view, 600,
                 LinearLayout.LayoutParams.WRAP_CONTENT, true);
         pop.setFocusable(true);// 点击back退出pop
@@ -186,9 +194,14 @@ public class BaseActivity extends AppCompatActivity {
 
         final EditText etIp = view.findViewById(R.id.etIp);
         final EditText etNum = view.findViewById(R.id.etWinNum);
+        final EditText etPort = view.findViewById(R.id.etPort);
+
         final Button mBtnCommit = view.findViewById(R.id.btnConfirm);
+
         final TextView labelNum = view.findViewById(R.id.labelNum);
+        final TextView labelPort = view.findViewById(R.id.labelPort);
         final TextView labelIp = view.findViewById(R.id.labelIp);
+
         final LinearLayout popRoot = view.findViewById(R.id.popRoot);
 
         if (bgColor != -1) {
@@ -197,11 +210,15 @@ public class BaseActivity extends AppCompatActivity {
         if (etbg != -1) {
             etIp.setBackgroundResource(etbg);
             etNum.setBackgroundResource(etbg);
+            etPort.setBackgroundResource(etbg);
         }
         if (txtColor != -1) {
             etIp.setTextColor(getResources().getColor(txtColor));
             etNum.setTextColor(getResources().getColor(txtColor));
+            etPort.setTextColor(getResources().getColor(txtColor));
+
             labelIp.setTextColor(getResources().getColor(txtColor));
+            labelPort.setTextColor(getResources().getColor(txtColor));
             labelNum.setTextColor(getResources().getColor(txtColor));
         }
         if (btnbg != -1) {
@@ -210,6 +227,7 @@ public class BaseActivity extends AppCompatActivity {
 
         etIp.setText(SPUtils.init(mContext).getDIYString(I.SP.IP));
         etNum.setText(SPUtils.init(mContext).getDIYString(I.SP.WINDOW_NUM));
+        etPort.setText(SPUtils.init(mContext).getDIYString(I.SP.PORT));
         //提交
         mBtnCommit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,6 +235,8 @@ public class BaseActivity extends AppCompatActivity {
                 //重新启动应用
                 SPUtils.init(mContext).putDIYString(I.SP.IP, etIp.getText().toString());
                 SPUtils.init(mContext).putDIYString(I.SP.WINDOW_NUM, etNum.getText().toString());
+                SPUtils.init(mContext).putDIYString(I.SP.PORT, etPort.getText().toString());
+                shouldDestory();
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -230,6 +250,10 @@ public class BaseActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    public void shouldDestory() {
+
     }
 
     public void showSettingPop(View anchor) {
