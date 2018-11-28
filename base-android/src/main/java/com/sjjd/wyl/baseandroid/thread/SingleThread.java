@@ -1,8 +1,8 @@
 package com.sjjd.wyl.baseandroid.thread;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
@@ -12,38 +12,46 @@ import com.lzy.okgo.model.Response;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 
 /**
  * Created by wyl on 2018/4/24.
  */
 
-public class DataThread<T> extends BaseThread {
+public class SingleThread<T> {
 
 
+    private static SingleThread instance;
     private Class<T> clazz;
-    private String url = "";
-    private int what = 0;//自定义的what
+    private int what = I.LOAD_DATA_SUCCESS;
+    private String url = null;
 
-
-    public DataThread(Handler handler, Context context, Class<T> clazz, HashMap<String, Object> parms) {
-        super(handler, context);
+    public SingleThread(Class<T> clazz) {
         this.clazz = clazz;
-        url = (String) parms.get("url");
-        what = (int) parms.get("what");
     }
 
-    public DataThread(Handler handler, Context context, Class<T> clazz, String url, int what) {
-        super(handler, context);
-        this.clazz = clazz;
-        this.url = url;
+    public static <T> SingleThread getInstance(Class<T> tClass) {
+        if (instance != null) {
+            instance = new SingleThread<>(tClass);
+        }
+        return instance;
+
+    }
+
+
+    public SingleThread what(int what) {
         this.what = what;
+        return this;
     }
 
+    public SingleThread url(String url) {
+        this.url = url;
+        return this;
+    }
 
-    @Override
-    protected void initData() {
-
+    public void excute(@NonNull final Handler handler) {
+        if (url == null) {
+            throw new RuntimeException("url 不能为空！");
+        }
         if (clazz.getName().equals(String.class.getName())) {
             OkGo.<String>get(url)
                     .tag(this)
@@ -53,13 +61,12 @@ public class DataThread<T> extends BaseThread {
                             String t = response.body();
                             if (t != null) {
                                 Message msg = Message.obtain();
-                                msg.what = what > 0 ? what : I.LOAD_DATA_SUCCESS;
+                                msg.what = what;
                                 msg.obj = t;
-                                mHandler.sendMessage(msg);
+                                handler.sendMessage(msg);
                             } else {
-                                mHandler.sendEmptyMessage(I.LOAD_DATA_FAILD);
+                                handler.sendEmptyMessage(I.LOAD_DATA_FAILD);
                             }
-                            // sleep_time = 1000 * 5;
                         }
 
                         @Override
@@ -83,7 +90,7 @@ public class DataThread<T> extends BaseThread {
                                 error.what = I.UNKNOWN_ERROR;
                                 error.obj = "未知错误！" + mException.getMessage();
                             }
-                            mHandler.sendMessage(error);
+                            handler.sendMessage(error);
                         }
                     });
         } else {
@@ -96,11 +103,11 @@ public class DataThread<T> extends BaseThread {
                             if (t != null) {
                                 Message msg = Message.obtain();
 
-                                msg.what = what > 0 ? what : I.LOAD_DATA_SUCCESS;
+                                msg.what = what;
                                 msg.obj = t;
-                                mHandler.sendMessage(msg);
+                                handler.sendMessage(msg);
                             } else {
-                                mHandler.sendEmptyMessage(I.LOAD_DATA_FAILD);
+                                handler.sendEmptyMessage(I.LOAD_DATA_FAILD);
                             }
 
                         }
@@ -126,11 +133,12 @@ public class DataThread<T> extends BaseThread {
                                 error.what = I.UNKNOWN_ERROR;
                                 error.obj = "未知错误！" + mException.getMessage();
                             }
-                            mHandler.sendMessage(error);
+                            handler.sendMessage(error);
 
                         }
                     });
         }
 
     }
+
 }

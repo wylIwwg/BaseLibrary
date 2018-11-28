@@ -45,7 +45,7 @@ public class AutoPollRecyclerView extends RecyclerView {
         }
     }
 
-    public static void setTimeAutoPoll(long timeAutoPoll) {
+    public void setTimeAutoPoll(long timeAutoPoll) {
         TIME_AUTO_POLL = timeAutoPoll;
     }
 

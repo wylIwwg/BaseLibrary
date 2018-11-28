@@ -21,11 +21,15 @@ public class TimeThread extends BaseThread {
     HashMap<String, String> result;
 
     public TimeThread(Context context, Handler handler) {
+        this(context, handler, "yyyy年MM月dd日", "HH:mm:ss", "EEEE");
+    }
+
+    public TimeThread(Context context, Handler handler, String dateFormat, String timeFormat, String weekFormat) {
         super(handler, context);
         result = new HashMap<>();
-        mTimeFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
-        mDateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
-        mWeekFormat = new SimpleDateFormat("EEEE", Locale.CHINA);
+        mTimeFormat = new SimpleDateFormat(timeFormat, Locale.CHINA);
+        mDateFormat = new SimpleDateFormat(dateFormat, Locale.CHINA);
+        mWeekFormat = new SimpleDateFormat(weekFormat, Locale.CHINA);
 
     }
 
