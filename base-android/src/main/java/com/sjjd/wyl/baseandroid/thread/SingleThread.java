@@ -30,7 +30,7 @@ public class SingleThread<T> {
     }
 
     public static <T> SingleThread getInstance(Class<T> tClass) {
-        if (instance != null) {
+        if (instance == null) {
             instance = new SingleThread<>(tClass);
         }
         return instance;
