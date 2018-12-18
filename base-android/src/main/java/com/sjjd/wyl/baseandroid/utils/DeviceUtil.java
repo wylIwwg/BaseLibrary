@@ -17,11 +17,16 @@ import android.util.DisplayMetrics;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.Reader;
 import java.lang.reflect.Method;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -175,13 +180,149 @@ public class DeviceUtil {
         }
     }
 
+
+    /**
+     * android 6.0及以上、7.0以下 获取mac地址
+     *
+     * @param context
+     * @return
+     */
+    public static String getMacAddress(Context context) {
+
+        String defMac = "02:00:00:00:00:00";
+        String mac = "";
+
+        mac = getMacFromWifiManager(context);//通过WiFimanager获取mac  6.0以下
+        if (!TextUtils.isEmpty(mac)) {
+            if (mac.equals(defMac)) {
+                mac = getMacFromCatOrder();//通过cat命令
+                if (mac.equals("") || mac.equals(defMac)) {
+                    mac = getMachineHardwareAddress();
+                }
+            }
+        } else {
+            mac = getMacFromCatOrder();//通过cat命令
+            if (mac.equals("") || mac.equals(defMac)) {
+                mac = getMachineHardwareAddress();
+            }
+        }
+        if (mac != null)
+            return mac.toUpperCase();
+        else return "";
+    }
+
+    /**
+     * android 7.0及以上 （2）扫描各个网络接口获取mac地址
+     *
+     */
+    /**
+     * 获取设备HardwareAddress地址
+     *
+     * @return
+     */
+    public static String getMachineHardwareAddress() {
+        Enumeration<NetworkInterface> interfaces = null;
+        try {
+            interfaces = NetworkInterface.getNetworkInterfaces();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        String hardWareAddress = null;
+        NetworkInterface iF = null;
+        if (interfaces == null) {
+            return null;
+        }
+        while (interfaces.hasMoreElements()) {
+            iF = interfaces.nextElement();
+            try {
+                hardWareAddress = bytesToString(iF.getHardwareAddress());
+                if (hardWareAddress != null)
+                    break;
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
+        }
+        return hardWareAddress;
+    }
+
+    /***
+     * byte转为String
+     *
+     * @param bytes
+     * @return
+     */
+    private static String bytesToString(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
+        StringBuilder buf = new StringBuilder();
+        for (byte b : bytes) {
+            buf.append(String.format("%02X:", b));
+        }
+        if (buf.length() > 0) {
+            buf.deleteCharAt(buf.length() - 1);
+        }
+        return buf.toString();
+    }
+
+
+    public static String getMacFromCatOrder() {
+        String str = "";
+        String macSerial = "";
+        try {
+            Process pp = Runtime.getRuntime().exec(
+                    "cat /sys/class/net/wlan0/address");
+            InputStreamReader ir = new InputStreamReader(pp.getInputStream());
+            LineNumberReader input = new LineNumberReader(ir);
+            for (; null != str; ) {
+                str = input.readLine();
+                if (str != null) {
+                    macSerial = str.trim();// 去空格
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            return "";
+        }
+        if ("".equals(macSerial)) {
+            try {
+                return loadFileAsString("/sys/class/net/eth0/address")
+                        .toUpperCase().substring(0, 17);
+            } catch (Exception e) {
+                return "";
+            }
+
+        }
+        return macSerial;
+    }
+
+
+    private static String loadFileAsString(String fileName) throws Exception {
+        FileReader reader = new FileReader(fileName);
+        String text = loadReaderAsString(reader);
+        reader.close();
+        return text;
+    }
+
+    private static String loadReaderAsString(Reader reader) throws Exception {
+        StringBuilder builder = new StringBuilder();
+        char[] buffer = new char[4096];
+        int readLength = reader.read(buffer);
+        while (readLength >= 0) {
+            builder.append(buffer, 0, readLength);
+            readLength = reader.read(buffer);
+        }
+        return builder.toString();
+    }
+
+
     /**
      * 获取mac地址
      *
      * @param context
      * @return
      */
-    public static String getMac(Context context) {
+    private static String getMacFromWifiManager(Context context) {
         if (context == null) {
             return "";
         }
@@ -206,7 +347,7 @@ public class DeviceUtil {
      *
      * @return
      */
-    public static String getWifiMacAddress() {
+    public static String getMacFromWlan0() {
         try {
             String interfaceName = "wlan0";
             List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());

@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
@@ -398,42 +397,7 @@ public class FileUtils {
         return true;
     }
 
-    /**
-     * 根据wifi信息获取本地mac
-     *
-     * @param context
-     * @return
-     */
-    public static String getMac(Context context) {
-        String macSerial = null;
-        String str = "";
 
-        try {
-            Process pp = Runtime.getRuntime().exec("cat /sys/class/net/wlan0/address ");
-            InputStreamReader ir = new InputStreamReader(pp.getInputStream());
-            LineNumberReader input = new LineNumberReader(ir);
-
-            for (; null != str; ) {
-                str = input.readLine();
-                if (str != null) {
-                    macSerial = str.trim();// 去空格
-                    break;
-                }
-            }
-        } catch (IOException ex) {
-            // 赋予默认值
-            ex.printStackTrace();
-        }
-
-        return macSerial==null?"":macSerial.toUpperCase();
-    }
-
-    public static void restartApplication(Context context) {
-        final Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
-        android.os.Process.killProcess(android.os.Process.myPid());
-    }
 }
 
 
