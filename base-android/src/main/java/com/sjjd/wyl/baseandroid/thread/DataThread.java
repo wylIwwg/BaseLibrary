@@ -25,6 +25,17 @@ public class DataThread<T> extends BaseThread {
     private String url = "";
     private int what = 0;//自定义的what
 
+    public void setClazz(Class<T> clazz) {
+        this.clazz = clazz;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setWhat(int what) {
+        this.what = what;
+    }
 
     public DataThread(Handler handler, Context context, Class<T> clazz, HashMap<String, Object> parms) {
         super(handler, context);
@@ -57,7 +68,7 @@ public class DataThread<T> extends BaseThread {
                                 msg.obj = t;
                                 mHandler.sendMessage(msg);
                             } else {
-                                mHandler.sendEmptyMessage(I.LOAD_DATA_FAILD);
+                                mHandler.sendEmptyMessage(I.LOAD_DATA_FAILED);
                             }
                             // sleep_time = 1000 * 5;
                         }
@@ -100,7 +111,7 @@ public class DataThread<T> extends BaseThread {
                                 msg.obj = t;
                                 mHandler.sendMessage(msg);
                             } else {
-                                mHandler.sendEmptyMessage(I.LOAD_DATA_FAILD);
+                                mHandler.sendEmptyMessage(I.LOAD_DATA_FAILED);
                             }
 
                         }

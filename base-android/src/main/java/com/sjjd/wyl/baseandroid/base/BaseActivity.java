@@ -103,7 +103,7 @@ public class BaseActivity extends AppCompatActivity {
         mBaseLlRoot.addView(view, lp);
     }
 
-    protected void hideBottomUIMenu() {
+    public void hideBottomUIMenu() {
         //隐藏虚拟按键，并全屏
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             View view = getWindow().getDecorView();
@@ -135,7 +135,7 @@ public class BaseActivity extends AppCompatActivity {
                 case I.SERVER_ERROR:
                 case I.UNKNOWN_ERROR:
                 case I.TIMEOUT:
-                    showError((String) msg.obj);
+                    showError( msg.obj==null?"处理异常":(String)msg.obj);
                     break;
 
             }

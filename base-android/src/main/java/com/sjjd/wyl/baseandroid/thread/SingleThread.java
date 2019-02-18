@@ -63,7 +63,7 @@ public class SingleThread<T> {
                                 msg.obj = t;
                                 handler.sendMessage(msg);
                             } else {
-                                handler.sendEmptyMessage(I.LOAD_DATA_FAILD);
+                                handler.sendEmptyMessage(I.LOAD_DATA_FAILED);
                             }
                         }
 
@@ -105,7 +105,7 @@ public class SingleThread<T> {
                                 msg.obj = t;
                                 handler.sendMessage(msg);
                             } else {
-                                handler.sendEmptyMessage(I.LOAD_DATA_FAILD);
+                                handler.sendEmptyMessage(I.LOAD_DATA_FAILED);
                             }
 
                         }
@@ -118,18 +118,23 @@ public class SingleThread<T> {
                                 mException.printStackTrace();
                             }
                             Message error = Message.obtain();
-                            if (mException instanceof SocketTimeoutException) {
-                                error.what = I.TIMEOUT;
-                                error.obj = mException.getMessage();
-                            } else if (mException instanceof UnknownHostException || mException instanceof ConnectException) {
-                                error.what = I.NET_ERROR;
-                                error.obj = mException.getMessage();
-                            } else if (mException instanceof HttpException) {
-                                error.what = I.SERVER_ERROR;
-                                error.obj = "服务器异常！";
-                            } else {
+                            if (mException == null) {
                                 error.what = I.UNKNOWN_ERROR;
-                                error.obj = "未知错误！" + mException.getMessage();
+                                error.obj = "未知错误！";
+                            } else {
+                                if (mException instanceof SocketTimeoutException) {
+                                    error.what = I.TIMEOUT;
+                                    error.obj = mException.getMessage();
+                                } else if (mException instanceof UnknownHostException || mException instanceof ConnectException) {
+                                    error.what = I.NET_ERROR;
+                                    error.obj = mException.getMessage();
+                                } else if (mException instanceof HttpException) {
+                                    error.what = I.SERVER_ERROR;
+                                    error.obj = "服务器异常！";
+                                } else {
+                                    error.what = I.UNKNOWN_ERROR;
+                                    error.obj = "未知错误！" + mException.getMessage();
+                                }
                             }
                             handler.sendMessage(error);
 

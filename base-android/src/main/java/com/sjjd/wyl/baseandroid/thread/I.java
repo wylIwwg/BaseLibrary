@@ -8,12 +8,12 @@ package com.sjjd.wyl.baseandroid.thread;
 public interface I {
 
     int LOAD_DATA_SUCCESS = 200;//数据加载成功
-    int LOAD_DATA_FAILD = -1;//数据加载失败
+    int LOAD_DATA_FAILED = -1;//数据加载失败
     int NET_ERROR = 300;//网络错误
     int SERVER_ERROR = 400;//服务器错误
     int UNKNOWN_ERROR = 250;//未知错误
     int TIMEOUT = 201;//请求超时
-    int TIME_CHANGED = 10001;//时间
+    int TIME_CHANGED = 10001;//时间变化
 
     interface SP {
         String IP = "ip";

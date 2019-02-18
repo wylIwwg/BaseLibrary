@@ -11,7 +11,6 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -342,7 +341,7 @@ public class FileUtils {
                     if (items.length > 0) {
                         String path = items[1];//.toLowerCase(Locale.getDefault());
                         // 添加一些判断，确保是sd卡，如果是otg等挂载方式，可以具体分析并添加判断条件
-                        //   LogUtils.e(TAG, "getUPath: " + items[0] + "   " + items[1]+ "   " + items[2]+ "   " + items[3]+ "   " + items[4]+ "   " + items[5]);
+                        //  LogUtils.e(TAG, "getUPath: " + items[0] + "   " + items[1]+ "   " + items[2]+ "   " + items[3]+ "   " + items[4]+ "   " + items[5]);
                         //  Rk3188   /storage/361A-28B5
                         //  Q-E10   /mnt/usb_storage
                         if (path.contains("usb_storage") || (path.contains("storage") && !path.contains("emulated"))) {
@@ -393,7 +392,7 @@ public class FileUtils {
             } catch (Exception e) {
             }
         }
-        Log.e("*** DEBUG ***", "Root SUC ");
+        LogUtils.e(TAG, "RootCommand: *** DEBUG *** Root SUC ");
         return true;
     }
 
