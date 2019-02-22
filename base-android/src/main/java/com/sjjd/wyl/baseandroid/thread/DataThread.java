@@ -70,7 +70,6 @@ public class DataThread<T> extends BaseThread {
                             } else {
                                 mHandler.sendEmptyMessage(I.LOAD_DATA_FAILED);
                             }
-                            // sleep_time = 1000 * 5;
                         }
 
                         @Override
@@ -81,18 +80,25 @@ public class DataThread<T> extends BaseThread {
                                 mException.printStackTrace();
                             }
                             Message error = Message.obtain();
-                            if (mException instanceof SocketTimeoutException) {
-                                error.what = I.TIMEOUT;
-                                error.obj = mException.getMessage();
-                            } else if (mException instanceof UnknownHostException || mException instanceof ConnectException) {
-                                error.what = I.NET_ERROR;
-                                error.obj = mException.getMessage();
-                            } else if (mException instanceof HttpException) {
-                                error.what = I.SERVER_ERROR;
-                                error.obj = "服务器异常！";
+                            if (mException != null) {
+
+                                if (mException instanceof SocketTimeoutException) {
+                                    error.what = I.TIMEOUT;
+                                    error.obj = mException.getMessage();
+                                } else if (mException instanceof UnknownHostException || mException instanceof ConnectException) {
+                                    error.what = I.NET_ERROR;
+                                    error.obj = mException.getMessage();
+                                } else if (mException instanceof HttpException) {
+                                    error.what = I.SERVER_ERROR;
+                                    error.obj = "服务器异常！";
+                                } else {
+                                    error.what = I.UNKNOWN_ERROR;
+                                    error.obj = "未知错误！" + mException.getMessage();
+                                }
                             } else {
                                 error.what = I.UNKNOWN_ERROR;
-                                error.obj = "未知错误！" + mException.getMessage();
+                                error.obj = "未知错误！";
+
                             }
                             mHandler.sendMessage(error);
                         }
@@ -124,18 +130,25 @@ public class DataThread<T> extends BaseThread {
                                 mException.printStackTrace();
                             }
                             Message error = Message.obtain();
-                            if (mException instanceof SocketTimeoutException) {
-                                error.what = I.TIMEOUT;
-                                error.obj = mException.getMessage();
-                            } else if (mException instanceof UnknownHostException || mException instanceof ConnectException) {
-                                error.what = I.NET_ERROR;
-                                error.obj = mException.getMessage();
-                            } else if (mException instanceof HttpException) {
-                                error.what = I.SERVER_ERROR;
-                                error.obj = "服务器异常！";
+                            if (mException != null) {
+
+                                if (mException instanceof SocketTimeoutException) {
+                                    error.what = I.TIMEOUT;
+                                    error.obj = mException.getMessage();
+                                } else if (mException instanceof UnknownHostException || mException instanceof ConnectException) {
+                                    error.what = I.NET_ERROR;
+                                    error.obj = mException.getMessage();
+                                } else if (mException instanceof HttpException) {
+                                    error.what = I.SERVER_ERROR;
+                                    error.obj = "服务器异常！";
+                                } else {
+                                    error.what = I.UNKNOWN_ERROR;
+                                    error.obj = "未知错误！" + mException.getMessage();
+                                }
                             } else {
                                 error.what = I.UNKNOWN_ERROR;
-                                error.obj = "未知错误！" + mException.getMessage();
+                                error.obj = "未知错误！";
+
                             }
                             mHandler.sendMessage(error);
 

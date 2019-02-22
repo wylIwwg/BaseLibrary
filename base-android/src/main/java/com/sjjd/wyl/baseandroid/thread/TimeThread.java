@@ -24,6 +24,15 @@ public class TimeThread extends BaseThread {
         this(context, handler, "yyyy年MM月dd日", "HH:mm:ss", "EEEE");
     }
 
+
+    /**
+     *
+     * @param context
+     * @param handler
+     * @param dateFormat
+     * @param timeFormat
+     * @param weekFormat
+     */
     public TimeThread(Context context, Handler handler, String dateFormat, String timeFormat, String weekFormat) {
         super(handler, context);
         result = new HashMap<>();

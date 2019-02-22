@@ -8,7 +8,7 @@ import android.util.Log;
 
 public class LogUtils {
 
-    static boolean showLog = true;
+    public static boolean showLog = true;//是否打印日志
     static int LOG_MAX_LENGTH = 2000;
 
     public static void e(String tag, String msg) {
