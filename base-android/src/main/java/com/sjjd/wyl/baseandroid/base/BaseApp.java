@@ -2,18 +2,26 @@ package com.sjjd.wyl.baseandroid.base;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 import com.sjjd.wyl.baseandroid.R;
+import com.sjjd.wyl.baseandroid.anr.ANRThread;
+import com.sjjd.wyl.baseandroid.crash.config.CrashConfig;
+import com.sjjd.wyl.baseandroid.tts.TTSManager;
+import com.sjjd.wyl.baseandroid.utils.ToastUtils;
 import com.tencent.bugly.crashreport.CrashReport;
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.runtime.Permission;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-import cat.ereza.customactivityoncrash.config.CaocConfig;
 import okhttp3.OkHttpClient;
 
 /**
@@ -21,9 +29,41 @@ import okhttp3.OkHttpClient;
  */
 public class BaseApp extends Application {
 
+    public Context mContext;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        new ANRThread().start();
+        mContext = this;
+    }
+
+
+    /**
+     * 初始化tts语音
+     *
+     * @param dir 目标文件存放路径
+     */
+    public void initTTs(final String dir) {
+        AndPermission.with(this)
+                .runtime().permission(Permission.Group
+                .STORAGE).onGranted(
+                new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+                        if (TTSManager.getInstance(mContext).existsTTsFile(dir)) {
+                            TTSManager.getInstance(mContext).initTts(mContext);
+                        } else {
+                            TTSManager.getInstance(mContext).copyFile();
+                        }
+                    }
+                }
+        ).onDenied(new Action<List<String>>() {
+            @Override
+            public void onAction(List<String> data) {
+                ToastUtils.showToast(mContext, "权限拒绝，将无法播放语音", 2000);
+            }
+        }).start();
     }
 
     public void initBugly(String key) {
@@ -31,8 +71,8 @@ public class BaseApp extends Application {
     }
 
     public void initDebug(Class<Activity> activity) {
-        CaocConfig.Builder.create()
-                .backgroundMode(CaocConfig.BACKGROUND_MODE_SILENT) //default: CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM
+        CrashConfig.Builder.create()
+                .backgroundMode(CrashConfig.BACKGROUND_MODE_SILENT) //default: CrashConfig.BACKGROUND_MODE_SHOW_CUSTOM
                 .enabled(true) //default: true
                 .showErrorDetails(true) //default: true
                 .showRestartButton(true) //default: true

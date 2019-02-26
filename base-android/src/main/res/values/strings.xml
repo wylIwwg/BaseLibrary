@@ -1,4 +1,17 @@
 <resources>
     <string name="back">Back</string>
+    <string name="error_activity_error_occurred_explanation">糟糕，程序发生了异常\n请点击下方【查看详情】\n并将错误日志发送给技术人员</string>
 
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="error_activity_error_details_text_size">12sp</dimen>
+
+    <string name="error_activity_restart_app">重启应用</string>
+    <string name="error_activity_close_app">关闭应用</string>
+    <string name="error_activity_error_details">查看详情</string>
+    <string name="error_activity_error_details_title">错误日志详情</string>
+    <string name="error_activity_error_details_close">关闭</string>
+    <string name="error_activity_error_details_copy">复制</string>
+    <string name="error_activity_error_details_copied">复制成功</string>
+    <string name="error_activity_error_details_clipboard_label">错误信息</string>
 </resources>
