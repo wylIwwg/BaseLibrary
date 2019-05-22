@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.sjjd.wyl.baseandroid.thread.I;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
 
 import org.json.JSONException;
@@ -17,11 +16,13 @@ import org.json.JSONObject;
  */
 public class SocketManager {
     private static volatile SocketManager instance = null;
-    private static String TAG = "SocketManager";
+    private static String TAG = "SocketManager2";
     private UDPSocket udpSocket;
     private TCPSocket tcpSocket;
     private Context mContext;
     private Handler mHandler;
+    private String IP;
+    private String PORT;
 
     private SocketManager(Context context) {
         mContext = context.getApplicationContext();
@@ -73,8 +74,8 @@ public class SocketManager {
     private void handleUdpMessage(String message) {
         try {
             JSONObject jsonObject = new JSONObject(message);
-            String ip = jsonObject.optString(Config.TCP_IP);
-            String port = jsonObject.optString(Config.TCP_PORT);
+            String ip = jsonObject.optString(IP);
+            String port = jsonObject.optString(PORT);
             if (!TextUtils.isEmpty(ip) && !TextUtils.isEmpty(port)) {
                 startTcpConnection(ip, port);
             }
@@ -89,62 +90,75 @@ public class SocketManager {
      * @param ip
      * @param port
      */
-    public void startTcpConnection(String ip, String port) {
+    public synchronized void startTcpConnection(String ip, String port) {
+        IP = ip;
+        PORT = port;
         tcpSocket = new TCPSocket(mContext);
+
         tcpSocket.startTcpSocket(ip, port);
-        tcpSocket.setOnConnectionStateListener(new OnConnectionStateListener() {
-            @Override
-            public void onSuccess() {// tcp 创建成功
-                //udpSocket.stopHeartbeatTimer();
-                LogUtils.e(TAG, "onSuccess: tcp 创建成功");
-            }
-
-            @Override
-            public void onFailed(int errorCode) {// tcp 异常处理
-
-                switch (errorCode) {
-                    case Config.ErrorCode.CREATE_TCP_ERROR:
-                        LogUtils.e(TAG, "onFailed: 连接失败");
-                        tcpSocket = null;
-                        if (mHandler != null) {
-                            mHandler.sendEmptyMessage(Config.ErrorCode.CREATE_TCP_ERROR);
-                        }
-                        startTcpConnection(Config.IP, Config.PORT);
-                        break;
-                    case Config.ErrorCode.PING_TCP_TIMEOUT:
-                        LogUtils.e(TAG, "onFailed: 连接超时");
-                        tcpSocket = null;
-                        if (mHandler != null) {
-                            mHandler.sendEmptyMessage(Config.ErrorCode.PING_TCP_TIMEOUT);
-                        }
-                        startTcpConnection(Config.IP, Config.PORT);
-                        break;
+        if (tcpSocket != null) {
+            tcpSocket.setOnConnectionStateListener(new OnConnectionStateListener() {
+                @Override
+                public void onSuccess() {// tcp 创建成功
+                    //udpSocket.stopHeartbeatTimer();
+                    LogUtils.e(TAG, "onSuccess: tcp 创建成功");
                 }
-            }
-        });
-        tcpSocket.addOnMessageReceiveListener(new OnMessageReceiveListener() {
-            @Override
-            public void onMessageReceived(String message) {
-                if (mHandler != null) {
-                    Message msg = Message.obtain();
-                    msg.what = I.LOAD_DATA_SUCCESS;
-                    msg.obj = message;
-                    mHandler.sendMessage(msg);
-                } else {
-                    LogUtils.e(TAG, "onMessageReceived: " + message);
-                }
-            }
-        });
 
+                @Override
+                public void onFailed(int errorCode) {// tcp 异常处理
+
+                    switch (errorCode) {
+                        case Config.ErrorCode.CREATE_TCP_ERROR:
+                            LogUtils.e(TAG, "onFailed: 连接失败");
+                            tcpSocket = null;
+                            if (mHandler != null) {
+                                mHandler.sendEmptyMessage(Config.ErrorCode.CREATE_TCP_ERROR);
+                            }
+                            startTcpConnection(IP, PORT);
+                            break;
+                        case Config.ErrorCode.PING_TCP_TIMEOUT:
+                            LogUtils.e(TAG, "onFailed: 连接超时");
+                            tcpSocket = null;
+                            if (mHandler != null) {
+                                mHandler.sendEmptyMessage(Config.ErrorCode.PING_TCP_TIMEOUT);
+                            }
+                            startTcpConnection(IP, PORT);
+                            break;
+                    }
+                }
+            });
+            tcpSocket.addOnMessageReceiveListener(new OnMessageReceiveListener() {
+                @Override
+                public void onMessageReceived(String message) {
+                    if (mHandler != null) {
+                        Message msg = Message.obtain();
+                        msg.what = Config.MSG_SOCKET_RECEIVED;
+                        msg.obj = message;
+                        mHandler.sendMessage(msg);
+                    } else {
+                        LogUtils.e(TAG, "onMessageReceived: " + message);
+                    }
+                }
+            });
+        }
+
+
+    }
+
+    public void destroy() {
+        stopSocket();
+        instance = null;
     }
 
     public void stopSocket() {
 
         if (udpSocket != null) {
+            udpSocket.stopHeartbeatTimer();
             udpSocket.stopUDPSocket();
             udpSocket = null;
         }
         if (tcpSocket != null) {
+            tcpSocket.stopHeartbeatTimer();
             tcpSocket.stopTcpConnection();
             tcpSocket = null;
         }

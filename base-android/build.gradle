@@ -48,11 +48,10 @@ dependencies {
     //腾讯bugly
     implementation 'com.tencent.bugly:crashreport:latest.release'
 
-
     //必须使用
     implementation 'com.lzy.net:okgo:3.0.4'
     //权限请求
-    implementation ('com.yanzhenjie.permission:support:2.0.0'){
+    implementation('com.yanzhenjie.permission:support:2.0.0') {
         exclude group: 'com.android.support'
     }
     implementation files('libs/usc.jar')

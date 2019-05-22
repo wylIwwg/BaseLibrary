@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
  * Created by wyl on 2018/11/22.
  */
 public class TCPSocket {
-    private static final String TAG = "TCPSocket";
+    private static final String TAG = "TCPSocket2";
     private static String LABEL = "\n";
     private ExecutorService mThreadPool;
     private Socket mSocket;
@@ -33,6 +33,7 @@ public class TCPSocket {
     private HeartbeatTimer timer;
     private long lastReceiveTime = 0;
     private Context mContext;
+    private String PING="";
 
     private OnConnectionStateListener mListener;
     private OnMessageReceiveListener mMessageListener;
@@ -52,6 +53,10 @@ public class TCPSocket {
         lastReceiveTime = System.currentTimeMillis();
         mMsgThread = new MsgThread();
 
+    }
+
+    public void setPING(String PING) {
+        this.PING = PING;
     }
 
     public void startTcpSocket(final String ip, final String port) {
@@ -105,15 +110,24 @@ public class TCPSocket {
                         continue;
                     }
                     String message = "";
+                    if (mSocket.isClosed()) {
+                        continue;
+                    }
                     InputStream is = mSocket.getInputStream();
-                    while (!mSocket.isClosed() && !mSocket.isInputShutdown()
-                            && alive && ((length = is.read(buffer)) != -1)) {
-                        if (length > 0) {
-                            message = new String(Arrays.copyOf(buffer,
-                                    length));
-                            handleReceiveTcpMessage(message);
+                    synchronized (mSocket) {
+                        while (alive && mSocket != null && !mSocket.isClosed() && !mSocket.isInputShutdown()
+                                ) {
+                            if (alive && mSocket != null && !mSocket.isClosed() && mSocket.isConnected() && ((length = is.read(buffer)) != -1)) {
+                                if (length > 0) {
+                                    message = new String(Arrays.copyOf(buffer,
+                                            length));
+                                    handleReceiveTcpMessage(message);
+                                }
+                            }
+
                         }
                     }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -124,7 +138,8 @@ public class TCPSocket {
 
     private void startReceiveTcpThread() {
 
-        mThreadPool.execute(mMsgThread);
+        if (mMsgThread != null)
+            mThreadPool.execute(mMsgThread);
     }
 
     /**
@@ -167,7 +182,7 @@ public class TCPSocket {
     public void sendTcpMessage(String json) {
         if (pw != null)
             pw.println(json);
-        LogUtils.e(TAG, "tcp 消息发送成功...");
+        LogUtils.e(TAG, "tcp 消息发送成功..." + json);
     }
 
     /**
@@ -196,7 +211,8 @@ public class TCPSocket {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    sendTcpMessage(jsonObject.toString());
+                    sendTcpMessage(PING);
+                    //sendTcpMessage(jsonObject.toString());
                 }
             }
 
@@ -240,6 +256,7 @@ public class TCPSocket {
 
     public void stopTcpConnection() {
         try {
+            alive = false;
             stopHeartbeatTimer();
             if (br != null) {
                 br.close();
@@ -251,6 +268,7 @@ public class TCPSocket {
                 mThreadPool.shutdown();
                 mThreadPool = null;
             }
+
             if (mSocket != null) {
                 mSocket.close();
                 mSocket = null;

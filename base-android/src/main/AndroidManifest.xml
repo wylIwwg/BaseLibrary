@@ -10,7 +10,7 @@
         android:allowBackup="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".base.BaseActivity">
+        <activity android:name=".base.BaseActivityTopBar">
         </activity>
         <activity
             android:name=".crash.activity.ErrorActivity"
@@ -21,6 +21,9 @@
             android:authorities="${applicationId}.customactivityoncrashinitprovider"
             android:exported="false"
             android:initOrder="101"/>
+
+        <activity android:name=".base.BaseActivity">
+        </activity>
     </application>
 
 </manifest>

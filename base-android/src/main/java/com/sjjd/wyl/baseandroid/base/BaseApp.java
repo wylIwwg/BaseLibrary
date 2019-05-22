@@ -47,7 +47,7 @@ public class BaseApp extends Application {
     public void initTTs(final String dir) {
         AndPermission.with(this)
                 .runtime().permission(Permission.Group
-                .STORAGE).onGranted(
+                .STORAGE).permission(Permission.READ_PHONE_STATE).onGranted(
                 new Action<List<String>>() {
                     @Override
                     public void onAction(List<String> data) {
