@@ -147,6 +147,20 @@
     <color name="palevioletred">#db7093</color><!--苍紫罗兰色 -->
     <color name="darkviolet">#9400d3</color><!--暗紫罗兰色 -->
     <color name="mediumorchid">#ba55d3</color><!--中粉紫色 -->
+
+
+    <color name="main">#199fda</color><!--黑色 -->
+
+    <color name="comcolor">#e0e6f1</color><!--黑色 -->
+    <color name="normal">#00557b</color><!--黑色 -->
+    <color name="pressed">#023248</color>
+    <color name="gray1">#60676767</color>
+    <color name="halftrans">#60000000</color>
+
+    <color name="main_theme">#FF5836</color>
+    <color name="main_theme1">#70FF5836</color>
+    <color name="main_theme2">#f13813</color>
+    <color name="main_theme3">#7e1703</color>
 </resources>
 
 

@@ -1,7 +1,7 @@
 package com.sjjd.wyl.baseandroid.thread;
 
+import com.alibaba.fastjson.JSON;
 import com.lzy.okgo.callback.AbsCallback;
-import com.sjjd.wyl.baseandroid.utils.GsonUtil;
 
 import java.lang.reflect.Type;
 
@@ -35,13 +35,11 @@ public abstract class JsonCallBack<T> extends AbsCallback<T> {
         if (body == null) return null;
 
         T t = null;
-
         if (type != null)
-            t = GsonUtil.fromJson(body.charStream(), type);
+            t = JSON.parseObject(body.string(), type);
 
         if (clazz != null)
-            t = GsonUtil.fromJson(body.charStream(), clazz);
-
+            t = JSON.parseObject(body.string(), clazz);
         return t;
 
     }
