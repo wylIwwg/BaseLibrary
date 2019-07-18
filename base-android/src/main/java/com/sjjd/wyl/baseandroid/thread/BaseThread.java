@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 
 import com.lzy.okgo.OkGo;
+import com.sjjd.wyl.baseandroid.utils.Configs;
 
 
 /**
@@ -74,7 +75,7 @@ public abstract class BaseThread extends Thread {
             } else {
                 call_times++;
                 if (call_times > CALL_TIMES) {
-                    mHandler.sendEmptyMessage(I.NET_ERROR);
+                    mHandler.sendEmptyMessage(Configs.NET_CONNECT_ERROR);
                 }
             }
             SystemClock.sleep(sleep_time);//沉睡sleep time

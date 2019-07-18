@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
+import com.sjjd.wyl.baseandroid.utils.Configs;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
 
 import org.json.JSONException;
@@ -16,13 +17,18 @@ import org.json.JSONObject;
  */
 public class SocketManager {
     private static volatile SocketManager instance = null;
-    private static String TAG = "SocketManager2";
+    private static String TAG = "SocketManager";
     private UDPSocket udpSocket;
     private TCPSocket tcpSocket;
     private Context mContext;
     private Handler mHandler;
     private String IP;
     private String PORT;
+    private int delayRequest = 5000;
+
+    public void setDelayRequest(int delayRequest) {
+        this.delayRequest = delayRequest;
+    }
 
     private SocketManager(Context context) {
         mContext = context.getApplicationContext();
@@ -108,21 +114,32 @@ public class SocketManager {
                 public void onFailed(int errorCode) {// tcp 异常处理
 
                     switch (errorCode) {
-                        case Config.ErrorCode.CREATE_TCP_ERROR:
+                        case Configs.MSG_CREATE_TCP_ERROR:
                             LogUtils.e(TAG, "onFailed: 连接失败");
                             tcpSocket = null;
                             if (mHandler != null) {
-                                mHandler.sendEmptyMessage(Config.ErrorCode.CREATE_TCP_ERROR);
+                                mHandler.sendEmptyMessage(Configs.MSG_CREATE_TCP_ERROR);
+                                //延迟时间去连接
+                                mHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        startTcpConnection(IP, PORT);
+                                    }
+                                }, delayRequest);
                             }
-                            startTcpConnection(IP, PORT);
                             break;
-                        case Config.ErrorCode.PING_TCP_TIMEOUT:
+                        case Configs.MSG_PING_TCP_TIMEOUT:
                             LogUtils.e(TAG, "onFailed: 连接超时");
                             tcpSocket = null;
                             if (mHandler != null) {
-                                mHandler.sendEmptyMessage(Config.ErrorCode.PING_TCP_TIMEOUT);
+                                mHandler.sendEmptyMessage(Configs.MSG_PING_TCP_TIMEOUT);
+                                mHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        startTcpConnection(IP, PORT);
+                                    }
+                                }, delayRequest);
                             }
-                            startTcpConnection(IP, PORT);
                             break;
                     }
                 }
@@ -132,7 +149,7 @@ public class SocketManager {
                 public void onMessageReceived(String message) {
                     if (mHandler != null) {
                         Message msg = Message.obtain();
-                        msg.what = Config.MSG_SOCKET_RECEIVED;
+                        msg.what = Configs.MSG_SOCKET_RECEIVED;
                         msg.obj = message;
                         mHandler.sendMessage(msg);
                     } else {

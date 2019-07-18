@@ -26,7 +26,7 @@ public class ToastUtils {
         mToast.show();
     }
 
-    public static void clearTasot() {
+    public static void clearToast() {
         if (mHandler != null && mToast != null) {
             mHandler.removeCallbacks(r);
             mToast = null;

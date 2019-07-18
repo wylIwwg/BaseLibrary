@@ -2,6 +2,7 @@ package com.sjjd.wyl.baseandroid.socket;
 
 import android.content.Context;
 
+import com.sjjd.wyl.baseandroid.utils.Configs;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
 
 import org.json.JSONException;
@@ -24,7 +25,7 @@ import java.util.concurrent.Executors;
  * Created by wyl on 2018/11/22.
  */
 public class TCPSocket {
-    private static final String TAG = "TCPSocket2";
+    private static final String TAG = " TCPSocket ";
     private static String LABEL = "\n";
     private ExecutorService mThreadPool;
     private Socket mSocket;
@@ -33,8 +34,8 @@ public class TCPSocket {
     private HeartbeatTimer timer;
     private long lastReceiveTime = 0;
     private Context mContext;
-    private String PING="";
-
+    private String PING = "";
+    private final Object mObject = new Object();
     private OnConnectionStateListener mListener;
     private OnMessageReceiveListener mMessageListener;
     private static final long TIME_OUT = 15 * 1000;
@@ -48,7 +49,7 @@ public class TCPSocket {
         mContext = context;
         int cpuNumbers = Runtime.getRuntime().availableProcessors();
         // 根据CPU数目初始化线程池
-        mThreadPool = Executors.newFixedThreadPool(cpuNumbers * Config.POOL_SIZE);
+        mThreadPool = Executors.newFixedThreadPool(cpuNumbers * Configs.POOL_SIZE);
         // 记录创建对象时的时间
         lastReceiveTime = System.currentTimeMillis();
         mMsgThread = new MsgThread();
@@ -74,7 +75,7 @@ public class TCPSocket {
                     if (mListener != null) {
                         alive = false;
                         stopTcpConnection();//创建失败 关闭资源
-                        mListener.onFailed(Config.ErrorCode.CREATE_TCP_ERROR);
+                        mListener.onFailed(Configs.MSG_CREATE_TCP_ERROR);
                     }
                 }
             }
@@ -114,7 +115,7 @@ public class TCPSocket {
                         continue;
                     }
                     InputStream is = mSocket.getInputStream();
-                    synchronized (mSocket) {
+                    synchronized (mObject) {
                         while (alive && mSocket != null && !mSocket.isClosed() && !mSocket.isInputShutdown()
                                 ) {
                             if (alive && mSocket != null && !mSocket.isClosed() && mSocket.isConnected() && ((length = is.read(buffer)) != -1)) {
@@ -129,7 +130,7 @@ public class TCPSocket {
                     }
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
 
             }
@@ -202,12 +203,12 @@ public class TCPSocket {
                     stopTcpConnection();
                     if (mListener != null) {
                         alive = false;
-                        mListener.onFailed(Config.ErrorCode.PING_TCP_TIMEOUT);
+                        mListener.onFailed(Configs.MSG_PING_TCP_TIMEOUT);
                     }
                 } else if (duration > HEARTBEAT_MESSAGE_DURATION) {//若超过两秒他没收到我的心跳包，则重新发一个。
                     JSONObject jsonObject = new JSONObject();
                     try {
-                        jsonObject.put(Config.MSG, Config.PING);
+                        jsonObject.put(Configs.TYPE, Configs.PING);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

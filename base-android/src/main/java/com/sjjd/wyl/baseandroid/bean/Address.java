@@ -1,13 +1,14 @@
 package com.sjjd.wyl.baseandroid.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by wyl on 2019/5/16.
  */
-public class Address {
-    public class Unit {
+public class Address implements Serializable {
+    public static class Unit implements Serializable {
         /// <summary>
         /// Unitid
         /// </summary>
@@ -35,7 +36,7 @@ public class Address {
         }
     }
 
-    public class Floor {
+    public static class Floor implements Serializable {
         /// <summary>
         /// Unitid
         /// </summary>
@@ -63,7 +64,7 @@ public class Address {
         }
     }
 
-    public class Area {
+    public static class Area implements Serializable {
         /// <summary>
         /// Unitid
         /// </summary>
@@ -104,7 +105,7 @@ public class Address {
         }
     }
 
-    public class Window {
+    public static class Window implements Serializable {
         /// <summary>
         /// Unitid
         /// </summary>
@@ -154,7 +155,7 @@ public class Address {
         }
     }
 
-    public class Data {
+    public static class Data implements Serializable {
         /// <summary>
         /// Unit
         /// </summary>

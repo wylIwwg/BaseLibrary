@@ -25,7 +25,6 @@ import com.sjjd.wyl.baseandroid.R;
 import com.sjjd.wyl.baseandroid.bean.Address;
 import com.sjjd.wyl.baseandroid.bean.Register;
 import com.sjjd.wyl.baseandroid.register.RegisterUtils;
-import com.sjjd.wyl.baseandroid.thread.I;
 import com.sjjd.wyl.baseandroid.thread.JsonCallBack;
 import com.sjjd.wyl.baseandroid.utils.AppUtils;
 import com.sjjd.wyl.baseandroid.utils.Configs;
@@ -94,7 +93,7 @@ public class BaseActivity extends AppCompatActivity implements BaseDataHandler.E
         if (mDataHandler != null) {
             mDataHandler.removeCallbacksAndMessages(null);
         }
-        ToastUtils.clearTasot();
+        ToastUtils.clearToast();
     }
 
     public void isDeviceRegistered() {
@@ -226,9 +225,9 @@ public class BaseActivity extends AppCompatActivity implements BaseDataHandler.E
         llArea.setVisibility(View.GONE);
         llPsw.setVisibility(View.VISIBLE);
 
-        etIp.setText(SPUtils.init(mContext).getDIYString(I.SP.IP));
+        etIp.setText(SPUtils.init(mContext).getDIYString(Configs.SP_IP));
         //etNum.setText(SPUtils.init(mContext).getDIYString(I.SP.WINDOW_NUM));
-        etPort.setText(SPUtils.init(mContext).getDIYString(I.SP.PORT));
+        etPort.setText(SPUtils.init(mContext).getDIYString(Configs.SP_PORT));
 
         mBtnClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -381,7 +380,7 @@ public class BaseActivity extends AppCompatActivity implements BaseDataHandler.E
             public void onClick(View view) {
                 String ip = etIp.getText().toString().trim();
                 if (!TextUtils.isEmpty(ip)) {
-                    HOST = String.format(Configs.API, ip);
+                    //HOST = String.format(, ip);
                     OkGo.<Address>post(HOST)
                             .params("method", METHOD_AREA)
                             .params("checkinfo", "{\"timestamp\":\"" + System.currentTimeMillis() + "\",\"token\":\"" + System.currentTimeMillis() + "\"}")
@@ -442,9 +441,9 @@ public class BaseActivity extends AppCompatActivity implements BaseDataHandler.E
             @Override
             public void onClick(View v) {
                 //重新启动应用
-                SPUtils.init(mContext).putDIYString(I.SP.IP, etIp.getText().toString().trim());
+                SPUtils.init(mContext).putDIYString(Configs.SP_IP, etIp.getText().toString().trim());
 
-                SPUtils.init(mContext).putDIYString(I.SP.PORT, etPort.getText().toString().trim());
+                SPUtils.init(mContext).putDIYString(Configs.SP_PORT, etPort.getText().toString().trim());
 
 
                 if (tvUnit == null || tvArea == null || tvFloor == null || tvWindow == null) {
@@ -454,10 +453,10 @@ public class BaseActivity extends AppCompatActivity implements BaseDataHandler.E
 
                 LogUtils.e(TAG, "onClick: tvFloor= " + tvFloor.getTag() + "  tvUnit= " + tvUnit.getTag() + "  tvArea= " + tvArea.getTag());
 
-                SPUtils.init(mContext).putDIYString(Configs.SP.FLOOR, tvFloor == null ? "" : tvFloor.getTag().toString());
-                SPUtils.init(mContext).putDIYString(Configs.SP.AREA, tvArea == null ? "" : tvArea.getTag().toString());
-                SPUtils.init(mContext).putDIYString(Configs.SP.UNITID, tvUnit == null ? "" : tvUnit.getTag().toString());
-                SPUtils.init(mContext).putDIYString(I.SP.WINDOW_NUM, tvWindow == null ? "" : tvWindow.getTag().toString());
+                SPUtils.init(mContext).putDIYString(Configs.SP_FLOOR, tvFloor == null ? "" : tvFloor.getTag().toString());
+                SPUtils.init(mContext).putDIYString(Configs.SP_AREA, tvArea == null ? "" : tvArea.getTag().toString());
+                SPUtils.init(mContext).putDIYString(Configs.SP_UNITID, tvUnit == null ? "" : tvUnit.getTag().toString());
+                SPUtils.init(mContext).putDIYString(Configs.SP_WINDOW_NUM, tvWindow == null ? "" : tvWindow.getTag().toString());
 
                 new Handler().postDelayed(new Runnable() {
                     @Override

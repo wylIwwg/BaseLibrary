@@ -47,7 +47,7 @@ dependencies {
     //腾讯bugly
     implementation 'com.tencent.bugly:crashreport:latest.release'
     implementation 'com.alibaba:fastjson:1.2.44'
-    implementation 'com.google.code.gson:gson:2.8.2'
+
     //必须使用
     implementation 'com.lzy.net:okgo:3.0.4'
     //权限请求
