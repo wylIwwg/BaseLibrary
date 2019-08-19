@@ -5,9 +5,6 @@ import android.content.Context;
 import com.sjjd.wyl.baseandroid.utils.Configs;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -117,7 +114,7 @@ public class TCPSocket {
                     InputStream is = mSocket.getInputStream();
                     synchronized (mObject) {
                         while (alive && mSocket != null && !mSocket.isClosed() && !mSocket.isInputShutdown()
-                                ) {
+                        ) {
                             if (alive && mSocket != null && !mSocket.isClosed() && mSocket.isConnected() && ((length = is.read(buffer)) != -1)) {
                                 if (length > 0) {
                                     message = new String(Arrays.copyOf(buffer,
@@ -196,25 +193,26 @@ public class TCPSocket {
         timer.setOnScheduleListener(new HeartbeatTimer.OnScheduleListener() {
             @Override
             public void onSchedule() {
-                long duration = System.currentTimeMillis() - lastReceiveTime;
-                LogUtils.e(TAG, "timer is onSchedule..." + " duration:" + duration);
-                if (duration > TIME_OUT) {//若超过十五秒都没收到我的心跳包，则认为对方不在线。
-                    LogUtils.e(TAG, "tcp ping 超时， 断开连接");
-                    stopTcpConnection();
-                    if (mListener != null) {
-                        alive = false;
-                        mListener.onFailed(Configs.MSG_PING_TCP_TIMEOUT);
+
+                if (PING != null && PING.length() > 0) {
+                    //如果ping不为null 则发送心跳ping
+                    long duration = System.currentTimeMillis() - lastReceiveTime;
+                    LogUtils.e(TAG, "timer is onSchedule..." + " duration:" + duration);
+                    if (duration > TIME_OUT) {//若超过十五秒都没收到我的心跳包，则认为对方不在线。
+                        LogUtils.e(TAG, "tcp ping 超时， 断开连接");
+                        stopTcpConnection();
+                        if (mListener != null) {
+                            alive = false;
+                            mListener.onFailed(Configs.MSG_PING_TCP_TIMEOUT);
+                        }
+                    } else if (duration > HEARTBEAT_MESSAGE_DURATION) {//若超过两秒他没收到我的心跳包，则重新发一个。
+                        sendTcpMessage(PING);
+                        //sendTcpMessage(jsonObject.toString());
                     }
-                } else if (duration > HEARTBEAT_MESSAGE_DURATION) {//若超过两秒他没收到我的心跳包，则重新发一个。
-                    JSONObject jsonObject = new JSONObject();
-                    try {
-                        jsonObject.put(Configs.TYPE, Configs.PING);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    sendTcpMessage(PING);
-                    //sendTcpMessage(jsonObject.toString());
+                } else {
+                    LogUtils.e(TAG, "onSchedule: 心跳为空 将不会发送");
                 }
+
             }
 
         });
@@ -234,7 +232,7 @@ public class TCPSocket {
      * @param ip
      * @param port
      */
-    private boolean startTcpConnection(final String ip, final int port) {
+    public boolean startTcpConnection(final String ip, final int port) {
         try {
             if (mSocket == null) {
                 mSocket = new Socket(ip, port);

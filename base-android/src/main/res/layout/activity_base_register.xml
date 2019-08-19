@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/llBaseRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context=".base.BaseRegisterActivity">
+
+        <LinearLayout
+            android:id="@+id/llSettingServer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100px"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="500px"
+                android:layout_height="60px"
+                android:background="@drawable/bg_login_et"
+                android:focusableInTouchMode="true">
+
+                <ImageView
+                    android:layout_width="56px"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/bg_amount"/>
+
+                <com.sjjd.wyl.baseandroid.view.MEditView
+                    android:id="@+id/etServerIp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5px"
+                    android:background="@drawable/bg_et_none"
+                    android:gravity="center_vertical"
+                    android:hint="请输入服务器socket ip"
+                    android:inputType="number|textUri"
+                    android:maxLines="1"
+                    android:paddingLeft="20px"
+                    android:singleLine="true"
+                    android:textCursorDrawable="@drawable/et_cursor"
+                    android:textSize="25px"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="500px"
+                android:layout_height="60px"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="50px"
+                android:background="@drawable/bg_login_et"
+                android:focusableInTouchMode="true">
+
+                <ImageView
+                    android:layout_width="56px"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/bg_amount"/>
+
+                <com.sjjd.wyl.baseandroid.view.MEditView
+                    android:id="@+id/etServerPort"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5px"
+                    android:background="@drawable/bg_et_none"
+                    android:gravity="center_vertical"
+                    android:hint="请输入服务器socket端口号"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:paddingLeft="20px"
+                    android:singleLine="true"
+                    android:textCursorDrawable="@drawable/et_cursor"
+                    android:textSize="25px"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnConnect"
+                android:layout_width="200px"
+                android:layout_height="60px"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="50px"
+                android:background="@drawable/bg_btn_connect"
+                android:text="连接服务器"
+                android:textColor="@color/white"
+                android:textSize="30px"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llSettingArea"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100px"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100px"
+            android:orientation="vertical">
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

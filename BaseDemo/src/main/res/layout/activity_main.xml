@@ -5,12 +5,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/tvMac"
+    <Button
+        android:onClick="showInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="查看信息"/>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textSize="40px"/>
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvMac"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="40px"/>
+    </ScrollView>
+
 </LinearLayout>

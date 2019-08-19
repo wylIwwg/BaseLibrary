@@ -57,5 +57,9 @@ public interface Configs {
     String SP_FLOOR = "floor";
     String SP_AREA = "area";
 
+    int DEVICE_REGISTERED = 2;//已注册
+    int DEVICE_FORBIDDEN = 1;//未注册
+    int DEVICE_OUTTIME = 3;//已过期
+
 
 }

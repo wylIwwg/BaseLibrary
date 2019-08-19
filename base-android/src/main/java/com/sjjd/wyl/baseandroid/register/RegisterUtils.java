@@ -3,6 +3,7 @@ package com.sjjd.wyl.baseandroid.register;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Base64;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.sjjd.wyl.baseandroid.bean.Register;
@@ -17,6 +18,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+
+import es.dmoral.toasty.Toasty;
 
 /**
  * Created by wyl on 2019/3/29.
@@ -146,13 +149,8 @@ public class RegisterUtils {
     }
 
 
-    /**
-     * //判断设备是否注册
-     * 返回设备注册时间
-     *
-     * @return
-     */
-    public int isDeviceRegistered() {
+    public Register getRegisterText() {
+
         try {
             File mFile = new File(PATH);
             if (mFile.exists()) {
@@ -161,28 +159,48 @@ public class RegisterUtils {
                 br.close();
                 if (data != null && data.length() > 0) {
 
-                    LogUtils.e(TAG, "isDeviceRegistered: " + data);
-
                     String result = str2Regsiter(data);//解密获取明文数据json
-                    mRegister = JSON.parseObject(result, Register.class);//将数据转成对象
-                    if (mRegister != null) {
-                        String mLimit = mRegister.getLimit();
-                        mRegister.getDate();
-                        if (mLimit != null && mLimit.length() > 0) {
-                            int mParseInt = Integer.parseInt(mLimit);
-                            return mParseInt;
-                        }
-                    }
-                    return Configs.REGISTER_FORBIDDEN;
+                    return JSON.parseObject(result, Register.class);//将数据转成对象
                 }
-                return Configs.REGISTER_FORBIDDEN;
             }//文件不存在 表示未注册
-            return Configs.REGISTER_FORBIDDEN;
 
         } catch (Exception e) {
             e.printStackTrace();
-            return Configs.REGISTER_FORBIDDEN;
         }
+
+        return null;
+    }
+
+    /**
+     * //判断设备是否注册
+     * 返回设备注册时间
+     *
+     * @return
+     */
+    public int isDeviceRegistered() {
+        try {
+            mRegister = getRegisterText();//将数据转成对象
+            if (mRegister != null) {
+                //判断密钥里面的mac值和设备mac是否一致
+                String mac = DeviceUtil.getMachineHardwareAddress();
+                if (mac == null || mac.equals("02:00:00:00:00:00")) {
+                    Toasty.error(mContext, "MAC获取不正确：" + mac, Toast.LENGTH_LONG, true).show();
+                    return Configs.REGISTER_FORBIDDEN;
+                }
+                if (mRegister.getIdentity().equals(mac)) {
+                    String mLimit = mRegister.getLimit();
+                    mRegister.getDate();
+                    if (mLimit != null && mLimit.length() > 0) {
+                        return Integer.parseInt(mLimit);
+                    }
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Configs.REGISTER_FORBIDDEN;
 
     }
 

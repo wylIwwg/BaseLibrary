@@ -69,6 +69,9 @@ public class SocketManager {
     }
 
     public TCPSocket getTcpSocket() {
+        if (tcpSocket == null) {
+            tcpSocket = new TCPSocket(mContext);
+        }
         return tcpSocket;
     }
 

@@ -322,7 +322,7 @@ public class DeviceUtil {
      * @param context
      * @return
      */
-    private static String getMacFromWifiManager(Context context) {
+    public static String getMacFromWifiManager(Context context) {
         if (context == null) {
             return "";
         }
@@ -331,10 +331,18 @@ public class DeviceUtil {
             final WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             if (wifi != null) {
                 WifiInfo info = wifi.getConnectionInfo();
-                if (null != info && info.getMacAddress() != null) {
-                    mac = info.getMacAddress();
+                if (wifi.isWifiEnabled() && null != info && info.getMacAddress() != null) {
+                    return info.getMacAddress().toUpperCase();
+                }
+
+                if (!wifi.isWifiEnabled()) {
+                    wifi.setWifiEnabled(true);
+                }
+                if (wifi.isWifiEnabled()) {
+
                 }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
