@@ -156,7 +156,7 @@ public class BaseActivity2 extends AppCompatActivity implements BaseDataHandler.
 
     }
 
-    private void initListener() {
+    public void initListener() {
         mBtnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -197,7 +197,7 @@ public class BaseActivity2 extends AppCompatActivity implements BaseDataHandler.
         }
     }
 
-    private void connectServer() {
+    public void connectServer() {
         mBtnConnect.setEnabled(false);
         final String port = mEtServerPort.getText().toString();
         final String ip = mEtServerIp.getText().toString();

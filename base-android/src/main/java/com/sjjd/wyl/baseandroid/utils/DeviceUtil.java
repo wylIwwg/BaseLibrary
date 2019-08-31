@@ -187,7 +187,7 @@ public class DeviceUtil {
      * @param context
      * @return
      */
-    public static String getMacAddress(Context context) {
+   /* public static String getMacAddress(Context context) {
 
         String defMac = "02:00:00:00:00:00";
         String mac = "";
@@ -209,7 +209,7 @@ public class DeviceUtil {
         if (mac != null)
             return mac.toUpperCase();
         else return "";
-    }
+    }*/
 
     /**
      * android 7.0及以上 （2）扫描各个网络接口获取mac地址

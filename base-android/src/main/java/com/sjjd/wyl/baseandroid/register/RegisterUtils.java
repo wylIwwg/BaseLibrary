@@ -80,7 +80,7 @@ public class RegisterUtils {
      */
     public String register2Base64(boolean just64, String mark) {
 
-        String mac = DeviceUtil.getMacAddress(mContext);
+        String mac = DeviceUtil.getMachineHardwareAddress();
         Register r = new Register();
         r.setIdentity(mac);
         r.setMark(mark);

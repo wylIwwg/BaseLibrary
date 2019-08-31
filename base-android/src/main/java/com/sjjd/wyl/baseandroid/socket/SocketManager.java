@@ -103,9 +103,8 @@ public class SocketManager {
         IP = ip;
         PORT = port;
         tcpSocket = new TCPSocket(mContext);
-
-        tcpSocket.startTcpSocket(ip, port);
         if (tcpSocket != null) {
+            //先设置监听
             tcpSocket.setOnConnectionStateListener(new OnConnectionStateListener() {
                 @Override
                 public void onSuccess() {// tcp 创建成功
@@ -160,6 +159,8 @@ public class SocketManager {
                     }
                 }
             });
+            //再连接
+            tcpSocket.startTcpSocket(ip, port);
         }
 
 
