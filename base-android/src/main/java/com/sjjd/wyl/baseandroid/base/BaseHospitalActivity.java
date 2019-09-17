@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,20 +14,19 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.model.Response;
 import com.sjjd.wyl.baseandroid.R;
 import com.sjjd.wyl.baseandroid.bean.Register;
 import com.sjjd.wyl.baseandroid.register.RegisterUtils;
 import com.sjjd.wyl.baseandroid.socket.SocketManager;
-import com.sjjd.wyl.baseandroid.thread.JsonCallBack;
 import com.sjjd.wyl.baseandroid.utils.Configs;
 import com.sjjd.wyl.baseandroid.utils.DisplayUtil;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
 import com.sjjd.wyl.baseandroid.utils.SPUtils;
 import com.sjjd.wyl.baseandroid.utils.ToastUtils;
+import com.sjjd.wyl.baseandroid.view.LoadingView;
 import com.sjjd.wyl.baseandroid.view.MEditView;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
@@ -35,7 +36,7 @@ import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 
-public class BaseRegisterActivity extends AppCompatActivity implements BaseDataHandler.MessageListener {
+public class BaseHospitalActivity extends AppCompatActivity implements BaseDataHandler.MessageListener {
     public String TAG = this.getClass().getSimpleName();
     public Context mContext;
     public BaseDataHandler mDataHandler;
@@ -44,65 +45,86 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
     public String MARK = "";//软件类型
 
     public String REGISTER_STR = "";
+    public String Client_ID = "";
     public int RegisterCode = 0;
+    public String METHOD_AREA;
     public String[] PERMISSIONS;
+
+    public LinearLayout mllContentRoot;//内容根布局
+    public DrawerLayout mDrawer;//抽屉根布局
+    public LinearLayout navigationView;//侧滑布局
 
     public MEditView mEtServerIp;
     public MEditView mEtServerPort;
     public Button mBtnConnect;
-    public LinearLayout mLlSettingServer;
-    public LinearLayout mLlSettingArea;
-    public LinearLayout mLlBaseRegister;
 
+    public RelativeLayout rlLoadingRoot;
+    public LoadingView mLoadingView;
+
+    public LinearLayout mLayoutArea;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setContentView(R.layout.activity_base_register);
+        super.setContentView(R.layout.activity_base_hospital);
+
         mContext = this;
 
-        mLlBaseRegister = findViewById(R.id.llBaseRegister);
-        mLlSettingArea = findViewById(R.id.llSettingArea);
-        mLlSettingServer = findViewById(R.id.llSettingServer);
+        mllContentRoot = findViewById(R.id.llContentRoot);
+        mDrawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.llLeftDrawer);
 
         mEtServerIp = findViewById(R.id.etServerIp);
         mEtServerPort = findViewById(R.id.etServerPort);
         mBtnConnect = findViewById(R.id.btnConnect);
 
+        rlLoadingRoot = findViewById(R.id.rlLoading);
+        mLoadingView = findViewById(R.id.loading);
+
+        mLayoutArea = findViewById(R.id.llArea);
+
 
         mDataHandler = new BaseDataHandler(this);
         mDataHandler.setErrorListener(this);
 
-        mBtnConnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //开始连接服务器
-                connectServer();
-            }
-        });
 
-        //检测是否有设置
-        String port = SPUtils.init(mContext).getDIYString(Configs.SP_PORT);
-        String ip = SPUtils.init(mContext).getDIYString(Configs.SP_IP);
-        mEtServerIp.setText(ip);
-        mEtServerPort.setText(port);
+      /*  ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawer, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.addDrawerListener(toggle);
+        toggle.syncState();*/
 
-
-
-        //检测是否有注册
-
-        //
+        // hasPermission();
 
     }
 
-    private void connectServer() {
-        mBtnConnect.setEnabled(false);
-        String port = mEtServerPort.getText().toString();
-        String ip = mEtServerIp.getText().toString();
-        SocketManager.getInstance(mContext).setHandler(mDataHandler).startTcpConnection(ip, port);
-
+    @Override
+    public void setContentView(int layoutResID) {
+        setContentView(View.inflate(this, layoutResID, null));
     }
 
+    @Override
+    public void setContentView(View view) {
+
+        if (mllContentRoot == null) return;
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mllContentRoot.addView(view, lp);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DisplayUtil.hideBottomUIMenu(this);
+    }
 
     public void hasPermission() {
         if (PERMISSIONS != null && PERMISSIONS.length > 0) {
@@ -131,19 +153,33 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
 
     public void initData() {
 
+
     }
 
-    @Override
-    public void setContentView(int layoutResID) {
-        setContentView(View.inflate(this, layoutResID, null));
-    }
+    public void initListener() {
+        mBtnConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                connectServer();
+            }
+        });
 
-    @Override
-    public void setContentView(View view) {
+        mDrawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                String ip = SPUtils.init(mContext).getDIYString(Configs.SP_IP);
+                String port = SPUtils.init(mContext).getDIYString(Configs.SP_PORT);
+                mEtServerPort.setText(port);
+                mEtServerIp.setText(ip);
+            }
 
-        if (mLlBaseRegister == null) return;
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mLlBaseRegister.addView(view, lp);
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                mLayoutArea.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
@@ -154,14 +190,6 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
     @Override
     public void userHandler(Message msg) {
         switch (msg.what) {
-            case Configs.MSG_SOCKET_RECEIVED://处理socket消息
-                String message = (String) msg.obj;
-                if (message != null && message.contains("client")) {
-                    //包含clientid说明连接成功
-                    mBtnConnect.setEnabled(true);
-                }
-                break;
-
             case Configs.MSG_CREATE_TCP_ERROR:
             case Configs.MSG_PING_TCP_TIMEOUT:
                 mBtnConnect.setEnabled(true);
@@ -169,10 +197,37 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        DisplayUtil.hideBottomUIMenu(this);
+    public void connectServer() {
+        mBtnConnect.setEnabled(false);
+        final String port = mEtServerPort.getText().toString();
+        final String ip = mEtServerIp.getText().toString();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (SocketManager.getInstance(mContext).getTcpSocket().startTcpConnection(ip, Integer.valueOf(port))) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toasty.success(mContext, "服务器连接成功！", Toast.LENGTH_SHORT, true).show();
+                            SPUtils.init(mContext).putDIYString(Configs.SP_PORT, mEtServerPort.getText().toString());
+                            SPUtils.init(mContext).putDIYString(Configs.SP_IP, mEtServerIp.getText().toString());
+                            mLayoutArea.setVisibility(View.VISIBLE);
+                            mBtnConnect.setEnabled(true);
+                            SocketManager.getInstance(mContext).destroy();
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mBtnConnect.setEnabled(true);
+
+                        }
+                    });
+                }
+            }
+        }).start();
+
     }
 
     @Override
@@ -181,7 +236,6 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
         if (mDataHandler != null) {
             mDataHandler.removeCallbacksAndMessages(null);
         }
-        //ToastUtils.clearToast();
     }
 
     public void isDeviceRegistered() {
@@ -225,33 +279,6 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
         }
     }
 
-    public void addDevice(String method, String content) {
-        OkGo.<String>post(HOST)
-                .params("content", content)
-                .params("checkinfo", "{\"timestamp\":\"" + System.currentTimeMillis() + "\",\"token\":\"" + System.currentTimeMillis() + "\"}")
-                .params("method", method)
-                .tag(this).execute(new JsonCallBack<String>(String.class) {
-            @Override
-            public void onSuccess(Response<String> response) {
-                LogUtils.e(TAG, "onSuccess: " + response.body());
-                addDeviceResult(response.body());
-
-            }
-
-            @Override
-            public void onError(Response<String> response) {
-                super.onError(response);
-                LogUtils.e(TAG, "onError: " + response.body());
-                ToastUtils.showToast(mContext, "初始化失败！", 2000);
-            }
-        });
-    }
-
-    public void addDeviceResult(String body) {
-        LogUtils.e(TAG, "addDeviceResult: " + body);
-    }
-
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
@@ -291,5 +318,4 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
             e.printStackTrace();
         }
     }
-
 }

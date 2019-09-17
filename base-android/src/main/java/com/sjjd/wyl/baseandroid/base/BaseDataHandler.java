@@ -14,15 +14,15 @@ import java.lang.ref.WeakReference;
 public class BaseDataHandler extends Handler {
     WeakReference<Activity> mReference;
 
-    public interface ErrorListener {
+    public interface MessageListener {
         void showError(String error);
 
         void userHandler(Message msg);
     }
 
-    public ErrorListener mErrorListener;
+    public MessageListener mErrorListener;
 
-    public void setErrorListener(ErrorListener errorListener) {
+    public void setErrorListener(MessageListener errorListener) {
         mErrorListener = errorListener;
     }
 

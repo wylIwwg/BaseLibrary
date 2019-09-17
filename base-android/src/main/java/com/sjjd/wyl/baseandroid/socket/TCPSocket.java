@@ -35,10 +35,19 @@ public class TCPSocket {
     private final Object mObject = new Object();
     private OnConnectionStateListener mListener;
     private OnMessageReceiveListener mMessageListener;
-    private static final long TIME_OUT = 15 * 1000;
-    private static final long HEARTBEAT_RATE = 5 * 1000;
-    private static final long HEARTBEAT_MESSAGE_DURATION = 2 * 1000;
+    private long TIME_OUT = 15 * 1000;//心跳超时时间
+    private long HEARTBEAT_RATE = 5 * 1000;//心跳间隔
+    private static final long HEARTBEAT_MESSAGE_DURATION = 2 * 1000;//心跳反应时间
     private boolean alive = false;
+
+
+    public void setTIME_OUT(long TIME_OUT) {
+        this.TIME_OUT = TIME_OUT;
+    }
+
+    public void setHEARTBEAT_RATE(long HEARTBEAT_RATE) {
+        this.HEARTBEAT_RATE = HEARTBEAT_RATE;
+    }
 
     private MsgThread mMsgThread;
 
@@ -152,9 +161,9 @@ public class TCPSocket {
         LogUtils.e(TAG, "\n接收 tcp 消息：" + line + "\n");
         lastReceiveTime = System.currentTimeMillis();
 
-        if (line.contains("pong")) {
+        /*if (line.contains("pong")) {
             return;
-        }
+        }*/
         if (line.contains(LABEL)) {
             int mIndex = line.indexOf(LABEL);//获取标识符索引
 

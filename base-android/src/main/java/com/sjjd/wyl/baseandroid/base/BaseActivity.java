@@ -27,7 +27,7 @@ import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 
-public class BaseActivity extends AppCompatActivity implements BaseDataHandler.ErrorListener {
+public class BaseActivity extends AppCompatActivity implements BaseDataHandler.MessageListener {
     public String TAG = this.getClass().getSimpleName();
     public Context mContext;
     public LinearLayout mBaseLlRoot;//根布局

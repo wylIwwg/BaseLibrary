@@ -48,8 +48,6 @@ public class UDPSocket {
     private ExecutorService mThreadPool;
     private Thread clientThread;
     private HeartbeatTimer timer;
-    private User localUser;
-    private User remoteUser;
     private final List<OnMessageReceiveListener> messageReceiveList;
 
     public UDPSocket(Context context) {
