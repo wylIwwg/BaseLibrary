@@ -7,7 +7,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.sjjd.wyl.baseandroid.bean.Register;
-import com.sjjd.wyl.baseandroid.utils.Configs;
+import com.sjjd.wyl.baseandroid.utils.IConfigs;
 import com.sjjd.wyl.baseandroid.utils.DeviceUtil;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
 
@@ -185,7 +185,7 @@ public class RegisterUtils {
                 String mac = DeviceUtil.getMachineHardwareAddress();
                 if (mac == null || mac.equals("02:00:00:00:00:00")) {
                     Toasty.error(mContext, "MAC获取不正确：" + mac, Toast.LENGTH_LONG, true).show();
-                    return Configs.REGISTER_FORBIDDEN;
+                    return IConfigs.REGISTER_FORBIDDEN;
                 }
                 if (mRegister.getIdentity().equals(mac)) {
                     String mLimit = mRegister.getLimit();
@@ -200,7 +200,7 @@ public class RegisterUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return Configs.REGISTER_FORBIDDEN;
+        return IConfigs.REGISTER_FORBIDDEN;
 
     }
 

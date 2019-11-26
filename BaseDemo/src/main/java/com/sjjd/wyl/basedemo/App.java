@@ -1,5 +1,7 @@
 package com.sjjd.wyl.basedemo;
 
+import android.os.Environment;
+
 import com.sjjd.wyl.baseandroid.base.BaseApp;
 
 /**
@@ -10,10 +12,10 @@ public class App extends BaseApp {
     public void onCreate() {
         super.onCreate();
 
-       // initTTs(Environment.getExternalStorageDirectory().getAbsolutePath() + "/test/tts/");
         initDebug(null);
         initOkGO();
 
-        initCrashRestart();
+       // initCrashRestart();
+        initTTs(Environment.getExternalStorageDirectory().getAbsolutePath() + "/test/tts/");
     }
 }

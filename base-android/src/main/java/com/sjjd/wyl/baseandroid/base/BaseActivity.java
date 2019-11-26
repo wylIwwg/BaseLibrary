@@ -1,24 +1,33 @@
 package com.sjjd.wyl.baseandroid.base;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.github.ybq.android.spinkit.SpinKitView;
+import com.github.ybq.android.spinkit.sprite.Sprite;
+import com.github.ybq.android.spinkit.style.Circle;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.sjjd.wyl.baseandroid.R;
 import com.sjjd.wyl.baseandroid.bean.Register;
 import com.sjjd.wyl.baseandroid.register.RegisterUtils;
 import com.sjjd.wyl.baseandroid.thread.JsonCallBack;
-import com.sjjd.wyl.baseandroid.utils.Configs;
 import com.sjjd.wyl.baseandroid.utils.DisplayUtil;
+import com.sjjd.wyl.baseandroid.utils.IConfigs;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
 import com.sjjd.wyl.baseandroid.utils.ToastUtils;
+import com.sjjd.wyl.baseandroid.view.TipsDialog;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 
@@ -84,7 +93,77 @@ public class BaseActivity extends AppCompatActivity implements BaseDataHandler.M
         DisplayUtil.hideBottomUIMenu(this);
     }
 
+    public TipsDialog mDialog;
+
+    public void showLoadingDialog() {
+        SpinKitView mloading = new SpinKitView(mContext);
+        Sprite doubleBounce = new Circle();
+        mloading.setIndeterminateDrawable(doubleBounce);
+        mloading.setColor(Color.parseColor("#ffffff"));
+        //mloading.setBackgroundColor(Color.parseColor("#666666"));
+
+        RelativeLayout.LayoutParams l2 = new RelativeLayout.LayoutParams(150, 150);
+        l2.addRule(RelativeLayout.CENTER_IN_PARENT);
+        RelativeLayout mLayout = new RelativeLayout(mContext);
+        mLayout.addView(mloading, l2);
+        mLayout.setBackgroundColor(Color.parseColor("#999999"));
+
+        TipsDialog mDialog = new TipsDialog(mContext);
+        Window window = mDialog.getWindow();
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.y = 20;
+        params.width = 200;
+        params.height = 200;
+        window.setBackgroundDrawableResource(R.drawable.back);
+        window.setAttributes(params);
+        window.setGravity(Gravity.TOP);
+        mDialog.setContentView(mLayout);
+        //mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
+
+    }
+
+    public void showTipsDialog() {
+        SpinKitView mloading = new SpinKitView(mContext);
+        Sprite doubleBounce = new Circle();
+        mloading.setIndeterminateDrawable(doubleBounce);
+        mloading.setColor(Color.parseColor("#ffffff"));
+        //mloading.setBackgroundColor(Color.parseColor("#666666"));
+
+        RelativeLayout.LayoutParams l2 = new RelativeLayout.LayoutParams(150, 150);
+        l2.addRule(RelativeLayout.CENTER_IN_PARENT);
+        RelativeLayout mLayout = new RelativeLayout(mContext);
+        mLayout.addView(mloading, l2);
+        mLayout.setBackgroundColor(Color.parseColor("#999999"));
+
+        TipsDialog mDialog = new TipsDialog(mContext);
+        Window window = mDialog.getWindow();
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.y = 20;
+        params.width = 200;
+        params.height = 200;
+        window.setBackgroundDrawableResource(R.drawable.back);
+        window.setAttributes(params);
+        window.setGravity(Gravity.TOP);
+        mDialog.setContentView(mLayout);
+        //mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
+
+    }
+
+    public void disTisDialog() {
+        if (mDialog != null) {
+            mDialog.dismiss();
+            mDialog = null;
+        }
+    }
+
+    public void initListener() {
+
+    }
+
     public void initData() {
+        initListener();
 
     }
 
@@ -111,6 +190,10 @@ public class BaseActivity extends AppCompatActivity implements BaseDataHandler.M
 
     }
 
+    public void close() {
+        this.finish();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -126,21 +209,21 @@ public class BaseActivity extends AppCompatActivity implements BaseDataHandler.M
 
         LogUtils.e(TAG, "onCreate: " + mRegistered);
         switch (mRegistered) {
-            case Configs.REGISTER_FORBIDDEN://禁止注册/未注册
+            case IConfigs.REGISTER_FORBIDDEN://禁止注册/未注册
                 //请求注册
                 //请求信息密文
                 REGISTER_STR = RegisterUtils.getInstance(mContext).register2Base64(false, MARK);
-                RegisterCode = Configs.DEVICE_FORBIDDEN;
+                RegisterCode = IConfigs.DEVICE_FORBIDDEN;
                 break;
-            case Configs.REGISTER_FOREVER://永久注册
-                RegisterCode = Configs.DEVICE_REGISTERED;
+            case IConfigs.REGISTER_FOREVER://永久注册
+                RegisterCode = IConfigs.DEVICE_REGISTERED;
                 isRegistered = true;
                 break;
             default://注册时间
                 Register mRegister = RegisterUtils.getInstance(mContext).getRegister();
                 if (mRegister != null) {
                     isRegistered = true;
-                    RegisterCode = Configs.DEVICE_REGISTERED;
+                    RegisterCode = IConfigs.DEVICE_REGISTERED;
                     String mDate = mRegister.getDate();//获取注册时间
                     long rt = Long.parseLong(mDate);
                     long mMillis = System.currentTimeMillis();//本地时间
@@ -150,7 +233,7 @@ public class BaseActivity extends AppCompatActivity implements BaseDataHandler.M
                     //到期了 再次申请注册
                     if (newDate2.getTime() < mMillis) {
                         ToastUtils.showToast(mContext, "设备注册已过期！", 2000);
-                        RegisterCode = Configs.DEVICE_OUTTIME;
+                        RegisterCode = IConfigs.DEVICE_OUTTIME;
                         REGISTER_STR = RegisterUtils.getInstance(mContext).register2Base64(false, MARK);
                         isRegistered = false;
                     }

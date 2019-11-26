@@ -3,7 +3,7 @@ package com.sjjd.wyl.baseandroid.socket;
 import android.content.Context;
 import android.util.Log;
 
-import com.sjjd.wyl.baseandroid.utils.Configs;
+import com.sjjd.wyl.baseandroid.utils.IConfigs;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
 import com.sjjd.wyl.baseandroid.utils.WifiUtil;
 
@@ -56,7 +56,7 @@ public class UDPSocket {
 
         int cpuNumbers = Runtime.getRuntime().availableProcessors();
         // 根据CPU数目初始化线程池
-        mThreadPool = Executors.newFixedThreadPool(cpuNumbers * Configs.POOL_SIZE);
+        mThreadPool = Executors.newFixedThreadPool(cpuNumbers * IConfigs.POOL_SIZE);
         // 记录创建对象时的时间
         lastReceiveTime = System.currentTimeMillis();
 
@@ -193,7 +193,7 @@ public class UDPSocket {
                 } else if (duration > HEARTBEAT_MESSAGE_DURATION) {//若超过十秒他没收到我的心跳包，则重新发一个。
                     JSONObject jsonObject = new JSONObject();
                     try {
-                        jsonObject.put(Configs.TYPE, Configs.HEARTBREAK);
+                        jsonObject.put(IConfigs.TYPE, IConfigs.HEARTBREAK);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

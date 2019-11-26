@@ -2,7 +2,7 @@ package com.sjjd.wyl.baseandroid.socket;
 
 import android.content.Context;
 
-import com.sjjd.wyl.baseandroid.utils.Configs;
+import com.sjjd.wyl.baseandroid.utils.IConfigs;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
 
 import java.io.BufferedReader;
@@ -55,7 +55,7 @@ public class TCPSocket {
         mContext = context;
         int cpuNumbers = Runtime.getRuntime().availableProcessors();
         // 根据CPU数目初始化线程池
-        mThreadPool = Executors.newFixedThreadPool(cpuNumbers * Configs.POOL_SIZE);
+        mThreadPool = Executors.newFixedThreadPool(cpuNumbers * IConfigs.POOL_SIZE);
         // 记录创建对象时的时间
         lastReceiveTime = System.currentTimeMillis();
         mMsgThread = new MsgThread();
@@ -81,7 +81,7 @@ public class TCPSocket {
                     if (mListener != null) {
                         alive = false;
                         stopTcpConnection();//创建失败 关闭资源
-                        mListener.onFailed(Configs.MSG_CREATE_TCP_ERROR);
+                        mListener.onFailed(IConfigs.MSG_CREATE_TCP_ERROR);
                     }
                 }
             }
@@ -212,7 +212,7 @@ public class TCPSocket {
                         stopTcpConnection();
                         if (mListener != null) {
                             alive = false;
-                            mListener.onFailed(Configs.MSG_PING_TCP_TIMEOUT);
+                            mListener.onFailed(IConfigs.MSG_PING_TCP_TIMEOUT);
                         }
                     } else if (duration > HEARTBEAT_MESSAGE_DURATION) {//若超过两秒他没收到我的心跳包，则重新发一个。
                         sendTcpMessage(PING);

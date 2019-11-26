@@ -21,7 +21,7 @@ import com.sjjd.wyl.baseandroid.bean.Register;
 import com.sjjd.wyl.baseandroid.register.RegisterUtils;
 import com.sjjd.wyl.baseandroid.socket.SocketManager;
 import com.sjjd.wyl.baseandroid.thread.JsonCallBack;
-import com.sjjd.wyl.baseandroid.utils.Configs;
+import com.sjjd.wyl.baseandroid.utils.IConfigs;
 import com.sjjd.wyl.baseandroid.utils.DisplayUtil;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
 import com.sjjd.wyl.baseandroid.utils.SPUtils;
@@ -82,8 +82,8 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
         });
 
         //检测是否有设置
-        String port = SPUtils.init(mContext).getDIYString(Configs.SP_PORT);
-        String ip = SPUtils.init(mContext).getDIYString(Configs.SP_IP);
+        String port = SPUtils.init(mContext).getDIYString(IConfigs.SP_PORT);
+        String ip = SPUtils.init(mContext).getDIYString(IConfigs.SP_IP);
         mEtServerIp.setText(ip);
         mEtServerPort.setText(port);
 
@@ -154,7 +154,7 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
     @Override
     public void userHandler(Message msg) {
         switch (msg.what) {
-            case Configs.MSG_SOCKET_RECEIVED://处理socket消息
+            case IConfigs.MSG_SOCKET_RECEIVED://处理socket消息
                 String message = (String) msg.obj;
                 if (message != null && message.contains("client")) {
                     //包含clientid说明连接成功
@@ -162,8 +162,8 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
                 }
                 break;
 
-            case Configs.MSG_CREATE_TCP_ERROR:
-            case Configs.MSG_PING_TCP_TIMEOUT:
+            case IConfigs.MSG_CREATE_TCP_ERROR:
+            case IConfigs.MSG_PING_TCP_TIMEOUT:
                 mBtnConnect.setEnabled(true);
                 break;
         }
@@ -190,21 +190,21 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
 
         LogUtils.e(TAG, "onCreate: " + mRegistered);
         switch (mRegistered) {
-            case Configs.REGISTER_FORBIDDEN://禁止注册/未注册
+            case IConfigs.REGISTER_FORBIDDEN://禁止注册/未注册
                 //请求注册
                 //请求信息密文
                 REGISTER_STR = RegisterUtils.getInstance(mContext).register2Base64(false, MARK);
-                RegisterCode = Configs.DEVICE_FORBIDDEN;
+                RegisterCode = IConfigs.DEVICE_FORBIDDEN;
                 break;
-            case Configs.REGISTER_FOREVER://永久注册
-                RegisterCode = Configs.DEVICE_REGISTERED;
+            case IConfigs.REGISTER_FOREVER://永久注册
+                RegisterCode = IConfigs.DEVICE_REGISTERED;
                 isRegistered = true;
                 break;
             default://注册时间
                 Register mRegister = RegisterUtils.getInstance(mContext).getRegister();
                 if (mRegister != null) {
                     isRegistered = true;
-                    RegisterCode = Configs.DEVICE_REGISTERED;
+                    RegisterCode = IConfigs.DEVICE_REGISTERED;
                     String mDate = mRegister.getDate();//获取注册时间
                     long rt = Long.parseLong(mDate);
                     long mMillis = System.currentTimeMillis();//本地时间
@@ -214,7 +214,7 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
                     //到期了 再次申请注册
                     if (newDate2.getTime() < mMillis) {
                         ToastUtils.showToast(mContext, "设备注册已过期！", 2000);
-                        RegisterCode = Configs.DEVICE_OUTTIME;
+                        RegisterCode = IConfigs.DEVICE_OUTTIME;
                         REGISTER_STR = RegisterUtils.getInstance(mContext).register2Base64(false, MARK);
                         isRegistered = false;
                     }

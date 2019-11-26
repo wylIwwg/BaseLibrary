@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.sjjd.wyl.baseandroid.R;
 import com.sjjd.wyl.baseandroid.utils.AppUtils;
-import com.sjjd.wyl.baseandroid.utils.Configs;
+import com.sjjd.wyl.baseandroid.utils.IConfigs;
 import com.sjjd.wyl.baseandroid.utils.SPUtils;
 import com.sjjd.wyl.baseandroid.utils.ToastUtils;
 
@@ -131,10 +131,10 @@ public class BaseActivityTopBar extends AppCompatActivity {
             super.handleMessage(msg);
             //常用消息处理
             switch (msg.what) {
-                case Configs.NET_CONNECT_ERROR:
-                case Configs.NET_SERVER_ERROR:
-                case Configs.NET_UNKNOWN_ERROR:
-                case Configs.NET_TIMEOUT:
+                case IConfigs.NET_CONNECT_ERROR:
+                case IConfigs.NET_SERVER_ERROR:
+                case IConfigs.NET_UNKNOWN_ERROR:
+                case IConfigs.NET_TIMEOUT:
                     showError(msg.obj == null ? "处理异常" : (String) msg.obj);
                     break;
 
@@ -224,17 +224,17 @@ public class BaseActivityTopBar extends AppCompatActivity {
             mBtnCommit.setBackgroundResource(btnbg);
         }
 
-        etIp.setText(SPUtils.init(mContext).getDIYString(Configs.SP_IP));
-        etNum.setText(SPUtils.init(mContext).getDIYString(Configs.SP_WINDOW_NUM));
-        etPort.setText(SPUtils.init(mContext).getDIYString(Configs.SP_PORT));
+        etIp.setText(SPUtils.init(mContext).getDIYString(IConfigs.SP_IP));
+        etNum.setText(SPUtils.init(mContext).getDIYString(IConfigs.SP_WINDOW_NUM));
+        etPort.setText(SPUtils.init(mContext).getDIYString(IConfigs.SP_PORT));
         //提交
         mBtnCommit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //重新启动应用
-                SPUtils.init(mContext).putDIYString(Configs.SP_IP, etIp.getText().toString());
-                SPUtils.init(mContext).putDIYString(Configs.SP_WINDOW_NUM, etNum.getText().toString());
-                SPUtils.init(mContext).putDIYString(Configs.SP_PORT, etPort.getText().toString());
+                SPUtils.init(mContext).putDIYString(IConfigs.SP_IP, etIp.getText().toString());
+                SPUtils.init(mContext).putDIYString(IConfigs.SP_WINDOW_NUM, etNum.getText().toString());
+                SPUtils.init(mContext).putDIYString(IConfigs.SP_PORT, etPort.getText().toString());
                 shouldDestory();
                 new Handler().postDelayed(new Runnable() {
                     @Override

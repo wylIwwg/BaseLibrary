@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
 
-import com.sjjd.wyl.baseandroid.utils.Configs;
+import com.sjjd.wyl.baseandroid.utils.IConfigs;
 
 import java.lang.ref.WeakReference;
 
@@ -35,10 +35,10 @@ public class BaseDataHandler extends Handler {
         super.handleMessage(msg);
         //常用消息处理
         switch (msg.what) {
-            case Configs.NET_CONNECT_ERROR:
-            case Configs.NET_SERVER_ERROR:
-            case Configs.NET_UNKNOWN_ERROR:
-            case Configs.NET_TIMEOUT:
+            case IConfigs.NET_CONNECT_ERROR:
+            case IConfigs.NET_SERVER_ERROR:
+            case IConfigs.NET_UNKNOWN_ERROR:
+            case IConfigs.NET_TIMEOUT:
                 if (mErrorListener != null)
                     mErrorListener.showError(msg.obj == null ? "处理异常" : (String) msg.obj);
                 break;

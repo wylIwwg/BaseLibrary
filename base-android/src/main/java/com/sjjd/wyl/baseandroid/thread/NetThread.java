@@ -3,7 +3,7 @@ package com.sjjd.wyl.baseandroid.thread;
 import android.content.Context;
 import android.os.Handler;
 
-import com.sjjd.wyl.baseandroid.utils.Configs;
+import com.sjjd.wyl.baseandroid.utils.IConfigs;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
 
 import java.net.HttpURLConnection;
@@ -31,9 +31,9 @@ public class NetThread extends BaseThread {
         try {
 
             if (isConnected(url)) {
-                mHandler.sendEmptyMessage(Configs.NET_URL_SUCCESS);
+                mHandler.sendEmptyMessage(IConfigs.NET_URL_SUCCESS);
             } else {
-                mHandler.sendEmptyMessage(Configs.NET_URL_ERROR);
+                mHandler.sendEmptyMessage(IConfigs.NET_URL_ERROR);
             }
         } catch (Exception e) {
             LogUtils.e(TAG, "initData: " + e.getMessage());

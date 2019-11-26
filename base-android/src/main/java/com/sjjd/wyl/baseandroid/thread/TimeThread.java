@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
-import com.sjjd.wyl.baseandroid.utils.Configs;
+import com.sjjd.wyl.baseandroid.utils.IConfigs;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -81,7 +81,7 @@ public class TimeThread extends BaseThread {
 
         Message mMessage = Message.obtain();
         mMessage.obj = result;
-        mMessage.what = Configs.NET_TIME_CHANGED;
+        mMessage.what = IConfigs.NET_TIME_CHANGED;
         mHandler.sendMessage(mMessage);
 
 

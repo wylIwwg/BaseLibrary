@@ -8,7 +8,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.exception.HttpException;
 import com.lzy.okgo.model.Response;
-import com.sjjd.wyl.baseandroid.utils.Configs;
+import com.sjjd.wyl.baseandroid.utils.IConfigs;
 
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -23,7 +23,7 @@ public class SingleThread<T> {
 
     private static SingleThread instance;
     private Class<T> clazz;
-    private int what = Configs.NET_LOAD_DATA_SUCCESS;
+    private int what = IConfigs.NET_LOAD_DATA_SUCCESS;
     private String url = null;
 
     public SingleThread(Class<T> clazz) {
@@ -64,7 +64,7 @@ public class SingleThread<T> {
                                 msg.obj = t;
                                 handler.sendMessage(msg);
                             } else {
-                                handler.sendEmptyMessage(Configs.NET_LOAD_DATA_FAILED);
+                                handler.sendEmptyMessage(IConfigs.NET_LOAD_DATA_FAILED);
                             }
                         }
 
@@ -79,20 +79,20 @@ public class SingleThread<T> {
                             if (mException != null) {
 
                                 if (mException instanceof SocketTimeoutException) {
-                                    error.what = Configs.NET_TIMEOUT;
+                                    error.what = IConfigs.NET_TIMEOUT;
                                     error.obj = "网络连接超时" + mException.getMessage();
                                 } else if (mException instanceof UnknownHostException || mException instanceof ConnectException) {
-                                    error.what = Configs.NET_CONNECT_ERROR;
+                                    error.what = IConfigs.NET_CONNECT_ERROR;
                                     error.obj = "域名解析失败，请检查网络是否连接，或域名是否存在！" + mException.getMessage();
                                 } else if (mException instanceof HttpException) {
-                                    error.what = Configs.NET_SERVER_ERROR;
+                                    error.what = IConfigs.NET_SERVER_ERROR;
                                     error.obj = "服务器异常！";
                                 } else {
-                                    error.what = Configs.NET_UNKNOWN_ERROR;
+                                    error.what = IConfigs.NET_UNKNOWN_ERROR;
                                     error.obj = "未知错误！" + mException.getMessage();
                                 }
                             } else {
-                                error.what = Configs.NET_UNKNOWN_ERROR;
+                                error.what = IConfigs.NET_UNKNOWN_ERROR;
                                 error.obj = "未知错误！";
 
                             }
@@ -113,7 +113,7 @@ public class SingleThread<T> {
                                 msg.obj = t;
                                 handler.sendMessage(msg);
                             } else {
-                                handler.sendEmptyMessage(Configs.NET_LOAD_DATA_FAILED);
+                                handler.sendEmptyMessage(IConfigs.NET_LOAD_DATA_FAILED);
                             }
 
                         }
@@ -127,21 +127,21 @@ public class SingleThread<T> {
                             }
                             Message error = Message.obtain();
                             if (mException == null) {
-                                error.what = Configs.NET_UNKNOWN_ERROR;
+                                error.what = IConfigs.NET_UNKNOWN_ERROR;
                                 error.obj = "未知错误！";
                             } else {
 
                                 if (mException instanceof SocketTimeoutException) {
-                                    error.what = Configs.NET_TIMEOUT;
+                                    error.what = IConfigs.NET_TIMEOUT;
                                     error.obj = "网络连接超时" + mException.getMessage();
                                 } else if (mException instanceof UnknownHostException || mException instanceof ConnectException) {
-                                    error.what = Configs.NET_CONNECT_ERROR;
+                                    error.what = IConfigs.NET_CONNECT_ERROR;
                                     error.obj = "域名解析失败，请检查网络是否连接，或域名是否存在！" + mException.getMessage();
                                 } else if (mException instanceof HttpException) {
-                                    error.what = Configs.NET_SERVER_ERROR;
+                                    error.what = IConfigs.NET_SERVER_ERROR;
                                     error.obj = "服务器异常！";
                                 } else {
-                                    error.what = Configs.NET_UNKNOWN_ERROR;
+                                    error.what = IConfigs.NET_UNKNOWN_ERROR;
                                     error.obj = "未知错误！" + mException.getMessage();
                                 }
                             }

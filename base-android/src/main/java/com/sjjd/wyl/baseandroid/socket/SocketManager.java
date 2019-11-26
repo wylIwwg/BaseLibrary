@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.sjjd.wyl.baseandroid.utils.Configs;
+import com.sjjd.wyl.baseandroid.utils.IConfigs;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
 
 import org.json.JSONException;
@@ -116,11 +116,11 @@ public class SocketManager {
                 public void onFailed(int errorCode) {// tcp 异常处理
 
                     switch (errorCode) {
-                        case Configs.MSG_CREATE_TCP_ERROR:
+                        case IConfigs.MSG_CREATE_TCP_ERROR:
                             LogUtils.e(TAG, "onFailed: 连接失败");
                             tcpSocket = null;
                             if (mHandler != null) {
-                                mHandler.sendEmptyMessage(Configs.MSG_CREATE_TCP_ERROR);
+                                mHandler.sendEmptyMessage(IConfigs.MSG_CREATE_TCP_ERROR);
                                 //延迟时间去连接
                                 mHandler.postDelayed(new Runnable() {
                                     @Override
@@ -130,11 +130,11 @@ public class SocketManager {
                                 }, delayRequest);
                             }
                             break;
-                        case Configs.MSG_PING_TCP_TIMEOUT:
+                        case IConfigs.MSG_PING_TCP_TIMEOUT:
                             LogUtils.e(TAG, "onFailed: 连接超时");
                             tcpSocket = null;
                             if (mHandler != null) {
-                                mHandler.sendEmptyMessage(Configs.MSG_PING_TCP_TIMEOUT);
+                                mHandler.sendEmptyMessage(IConfigs.MSG_PING_TCP_TIMEOUT);
                                 mHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -151,7 +151,7 @@ public class SocketManager {
                 public void onMessageReceived(String message) {
                     if (mHandler != null) {
                         Message msg = Message.obtain();
-                        msg.what = Configs.MSG_SOCKET_RECEIVED;
+                        msg.what = IConfigs.MSG_SOCKET_RECEIVED;
                         msg.obj = message;
                         mHandler.sendMessage(msg);
                     } else {
