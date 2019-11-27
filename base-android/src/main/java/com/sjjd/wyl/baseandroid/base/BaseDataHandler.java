@@ -22,7 +22,7 @@ public class BaseDataHandler extends Handler {
 
     public MessageListener mErrorListener;
 
-    public void setErrorListener(MessageListener errorListener) {
+    public void setMessageListener(MessageListener errorListener) {
         mErrorListener = errorListener;
     }
 

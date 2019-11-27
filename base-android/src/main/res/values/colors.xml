@@ -5,6 +5,10 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="transparent">#00000000</color><!--黑色 -->
+    <color name="transparent1">#44000000</color><!--黑色 -->
+    <color name="transparent2">#aa000000</color><!--黑色 -->
+
     <color name="black">#000000</color><!--黑色 -->
     <color name="white">#ffffff</color><!--白色-->
     <color name="snow">#fffafa</color><!--雪白色 -->

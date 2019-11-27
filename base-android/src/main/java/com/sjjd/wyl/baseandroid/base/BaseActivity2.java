@@ -1,32 +1,33 @@
 package com.sjjd.wyl.baseandroid.base;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sjjd.wyl.baseandroid.R;
 import com.sjjd.wyl.baseandroid.bean.Register;
 import com.sjjd.wyl.baseandroid.register.RegisterUtils;
-import com.sjjd.wyl.baseandroid.socket.SocketManager;
-import com.sjjd.wyl.baseandroid.utils.IConfigs;
 import com.sjjd.wyl.baseandroid.utils.DisplayUtil;
+import com.sjjd.wyl.baseandroid.utils.IConfigs;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
-import com.sjjd.wyl.baseandroid.utils.SPUtils;
 import com.sjjd.wyl.baseandroid.utils.ToastUtils;
-import com.sjjd.wyl.baseandroid.view.LoadingView;
 import com.sjjd.wyl.baseandroid.view.MEditView;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
@@ -56,12 +57,7 @@ public class BaseActivity2 extends AppCompatActivity implements BaseDataHandler.
 
     public MEditView mEtServerIp;
     public MEditView mEtServerPort;
-    public Button mBtnConnect;
 
-    public RelativeLayout rlLoadingRoot;
-    public LoadingView mLoadingView;
-
-    public LinearLayout mLayoutArea;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,16 +72,10 @@ public class BaseActivity2 extends AppCompatActivity implements BaseDataHandler.
 
         mEtServerIp = findViewById(R.id.etServerIp);
         mEtServerPort = findViewById(R.id.etServerPort);
-        mBtnConnect = findViewById(R.id.btnConnect);
-
-        rlLoadingRoot = findViewById(R.id.rlLoading);
-        mLoadingView = findViewById(R.id.loading);
-
-        mLayoutArea = findViewById(R.id.llArea);
 
 
         mDataHandler = new BaseDataHandler(this);
-        mDataHandler.setErrorListener(this);
+        mDataHandler.setMessageListener(this);
 
 
       /*  ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -151,35 +141,51 @@ public class BaseActivity2 extends AppCompatActivity implements BaseDataHandler.
         }
     }
 
+    PopupWindow popLoading;
+
+    public void closeLoading() {
+        if (popLoading != null && popLoading.isShowing()) {
+            popLoading.dismiss();
+        }
+    }
+
+    public void showLoading(String tips, View view) {
+
+        View mSettingView = LayoutInflater.from(mContext).inflate(R.layout.layout_loading, null);
+        popLoading = new PopupWindow(mSettingView, DisplayUtil.dip2px(mContext, 200), DisplayUtil.dip2px(mContext, 200), true);
+        popLoading.setFocusable(false);// 点击back退出pop
+        popLoading.setOutsideTouchable(false);
+        // popLoading.setElevation(5);
+        TextView tv = mSettingView.findViewById(R.id.tvLoadTips);
+        tv.setText(tips);
+        popLoading.setBackgroundDrawable(new ColorDrawable(0x00ffffff));
+        if (!popLoading.isShowing()) {
+            popLoading.showAtLocation(view, Gravity.CENTER, 1, 1);
+        }
+        DisplayUtil.hideBottomUIMenu(this);
+        popLoading.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                DisplayUtil.hideBottomUIMenu((Activity) mContext);
+            }
+        });
+
+
+    }
+
+    public void showLoading(String tips) {
+        showLoading(tips, mllContentRoot);
+
+
+    }
+
     public void initData() {
 
 
     }
 
     public void initListener() {
-        mBtnConnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                connectServer();
-            }
-        });
 
-        mDrawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                String ip = SPUtils.init(mContext).getDIYString(IConfigs.SP_IP);
-                String port = SPUtils.init(mContext).getDIYString(IConfigs.SP_PORT);
-                mEtServerPort.setText(port);
-                mEtServerIp.setText(ip);
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                mLayoutArea.setVisibility(View.GONE);
-            }
-        });
     }
 
     @Override
@@ -192,42 +198,8 @@ public class BaseActivity2 extends AppCompatActivity implements BaseDataHandler.
         switch (msg.what) {
             case IConfigs.MSG_CREATE_TCP_ERROR:
             case IConfigs.MSG_PING_TCP_TIMEOUT:
-                mBtnConnect.setEnabled(true);
                 break;
         }
-    }
-
-    public void connectServer() {
-        mBtnConnect.setEnabled(false);
-        final String port = mEtServerPort.getText().toString();
-        final String ip = mEtServerIp.getText().toString();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (SocketManager.getInstance(mContext).getTcpSocket().startTcpConnection(ip, Integer.valueOf(port))) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toasty.success(mContext, "服务器连接成功！", Toast.LENGTH_SHORT, true).show();
-                            SPUtils.init(mContext).putDIYString(IConfigs.SP_PORT, mEtServerPort.getText().toString());
-                            SPUtils.init(mContext).putDIYString(IConfigs.SP_IP, mEtServerIp.getText().toString());
-                            mLayoutArea.setVisibility(View.VISIBLE);
-                            mBtnConnect.setEnabled(true);
-                            SocketManager.getInstance(mContext).destroy();
-                        }
-                    });
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mBtnConnect.setEnabled(true);
-
-                        }
-                    });
-                }
-            }
-        }).start();
-
     }
 
     @Override

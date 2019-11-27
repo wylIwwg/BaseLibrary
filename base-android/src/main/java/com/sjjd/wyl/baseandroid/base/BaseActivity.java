@@ -58,7 +58,7 @@ public class BaseActivity extends AppCompatActivity implements BaseDataHandler.M
         mContext = this;
         mBaseLlRoot = findViewById(R.id.baseLlRoot);
         mDataHandler = new BaseDataHandler(this);
-        mDataHandler.setErrorListener(this);
+        mDataHandler.setMessageListener(this);
 
     }
 

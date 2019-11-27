@@ -78,14 +78,12 @@ public class BaseHospitalActivity extends AppCompatActivity implements BaseDataH
         mEtServerPort = findViewById(R.id.etServerPort);
         mBtnConnect = findViewById(R.id.btnConnect);
 
-        rlLoadingRoot = findViewById(R.id.rlLoading);
-        mLoadingView = findViewById(R.id.loading);
 
         mLayoutArea = findViewById(R.id.llArea);
 
 
         mDataHandler = new BaseDataHandler(this);
-        mDataHandler.setErrorListener(this);
+        mDataHandler.setMessageListener(this);
 
 
       /*  ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

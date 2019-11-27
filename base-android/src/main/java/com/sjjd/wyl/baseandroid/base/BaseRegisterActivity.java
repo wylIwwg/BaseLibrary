@@ -71,7 +71,7 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
 
 
         mDataHandler = new BaseDataHandler(this);
-        mDataHandler.setErrorListener(this);
+        mDataHandler.setMessageListener(this);
 
         mBtnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
