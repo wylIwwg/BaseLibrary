@@ -1,4 +1,7 @@
 package com.sjjd.wyl.baseandroid.socket;
+/**
+ * Created by wyl on 2019/12/17.
+ */
 
 import android.content.Context;
 
@@ -31,7 +34,6 @@ public class TCPSocket {
     private HeartbeatTimer timer;
     private long lastReceiveTime = 0;
     private Context mContext;
-    private String PING = "";
     private final Object mObject = new Object();
     private OnConnectionStateListener mListener;
     private OnMessageReceiveListener mMessageListener;
@@ -62,9 +64,6 @@ public class TCPSocket {
 
     }
 
-    public void setPING(String PING) {
-        this.PING = PING;
-    }
 
     public void startTcpSocket(final String ip, final String port) {
         mThreadPool.execute(new Runnable() {
@@ -122,9 +121,8 @@ public class TCPSocket {
                     }
                     InputStream is = mSocket.getInputStream();
                     synchronized (mObject) {
-                        while (alive && mSocket != null && !mSocket.isClosed() && !mSocket.isInputShutdown()
-                        ) {
-                            if (alive && mSocket != null && !mSocket.isClosed() && mSocket.isConnected() && ((length = is.read(buffer)) != -1)) {
+                        while (alive && mSocket != null && mSocket.isConnected() && !mSocket.isClosed()) {
+                            if (alive && mSocket != null && mSocket.isConnected() && !mSocket.isClosed() && ((length = is.read(buffer)) != -1)) {
                                 if (length > 0) {
                                     message = new String(Arrays.copyOf(buffer,
                                             length));
@@ -203,7 +201,7 @@ public class TCPSocket {
             @Override
             public void onSchedule() {
 
-                if (PING != null && PING.length() > 0) {
+                if (SocketManager.getInstance(mContext).getPING() != null && SocketManager.getInstance(mContext).getPING().length() > 0) {
                     //如果ping不为null 则发送心跳ping
                     long duration = System.currentTimeMillis() - lastReceiveTime;
                     LogUtils.e(TAG, "timer is onSchedule..." + " duration:" + duration);
@@ -215,7 +213,7 @@ public class TCPSocket {
                             mListener.onFailed(IConfigs.MSG_PING_TCP_TIMEOUT);
                         }
                     } else if (duration > HEARTBEAT_MESSAGE_DURATION) {//若超过两秒他没收到我的心跳包，则重新发一个。
-                        sendTcpMessage(PING);
+                        sendTcpMessage(SocketManager.getInstance(mContext).getPING());
                         //sendTcpMessage(jsonObject.toString());
                     }
                 } else {

@@ -1,4 +1,7 @@
 package com.sjjd.wyl.baseandroid.socket;
+/**
+ * Created by wyl on 2019/12/17.
+ */
 
 import android.content.Context;
 import android.os.Handler;
@@ -24,7 +27,18 @@ public class SocketManager {
     private Handler mHandler;
     private String IP;
     private String PORT;
+    private String PING = "";
     private int delayRequest = 5000;
+
+
+    public void setPING(String ping) {
+        this.PING = ping;
+        LogUtils.e(TAG, "setPING: " + ping);
+    }
+
+    public String getPING() {
+        return PING == null ? "" : PING;
+    }
 
     public void setDelayRequest(int delayRequest) {
         this.delayRequest = delayRequest;
@@ -86,7 +100,7 @@ public class SocketManager {
             String ip = jsonObject.optString(IP);
             String port = jsonObject.optString(PORT);
             if (!TextUtils.isEmpty(ip) && !TextUtils.isEmpty(port)) {
-                startTcpConnection(ip, port);
+                startTcpConnection(ip, port, PING);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -99,9 +113,10 @@ public class SocketManager {
      * @param ip
      * @param port
      */
-    public synchronized void startTcpConnection(String ip, String port) {
+    public synchronized void startTcpConnection(String ip, String port, String ping) {
         IP = ip;
         PORT = port;
+        PING = ping;
         tcpSocket = new TCPSocket(mContext);
         if (tcpSocket != null) {
             //先设置监听
@@ -125,7 +140,7 @@ public class SocketManager {
                                 mHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        startTcpConnection(IP, PORT);
+                                        startTcpConnection(IP, PORT, PING);
                                     }
                                 }, delayRequest);
                             }
@@ -138,7 +153,7 @@ public class SocketManager {
                                 mHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        startTcpConnection(IP, PORT);
+                                        startTcpConnection(IP, PORT, PING);
                                     }
                                 }, delayRequest);
                             }

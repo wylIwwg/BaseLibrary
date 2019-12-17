@@ -88,7 +88,6 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
         mEtServerPort.setText(port);
 
 
-
         //检测是否有注册
 
         //
@@ -99,7 +98,7 @@ public class BaseRegisterActivity extends AppCompatActivity implements BaseDataH
         mBtnConnect.setEnabled(false);
         String port = mEtServerPort.getText().toString();
         String ip = mEtServerIp.getText().toString();
-        SocketManager.getInstance(mContext).setHandler(mDataHandler).startTcpConnection(ip, port);
+        SocketManager.getInstance(mContext).setHandler(mDataHandler).startTcpConnection(ip, port, "{\"type\":\"ping\"}");
 
     }
 

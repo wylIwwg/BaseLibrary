@@ -12,7 +12,7 @@ public class App extends BaseApp {
     public void onCreate() {
         super.onCreate();
 
-        initDebug(null);
+      //  initDebug(null);
         initOkGO();
 
        // initCrashRestart();

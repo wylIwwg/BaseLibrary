@@ -20,8 +20,6 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.sjjd.wyl.baseandroid.utils.LogUtils;
-
 /**
  * Created by wyl on 2019/11/26.
  */
@@ -62,7 +60,6 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         if (view == null) {
             view = mConvertView.findViewById(viewId);
             mViews.put(viewId, view);
-            LogUtils.e("00000", "getView: ");
         }
         return (T) view;
     }

@@ -12,19 +12,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.sjjd.wyl.baseandroid.adapter.CommonAdapter;
 import com.sjjd.wyl.baseandroid.adapter.ViewHolder;
 import com.sjjd.wyl.baseandroid.base.BaseActivity2;
+import com.sjjd.wyl.baseandroid.bean.Banner;
+import com.sjjd.wyl.baseandroid.socket.SocketManager;
 import com.sjjd.wyl.baseandroid.utils.DeviceUtil;
 import com.sjjd.wyl.baseandroid.utils.DisplayUtil;
 import com.sjjd.wyl.baseandroid.utils.IConfigs;
 import com.sjjd.wyl.baseandroid.utils.LogUtils;
 import com.sjjd.wyl.baseandroid.utils.WifiUtil;
 import com.sjjd.wyl.baseandroid.view.AutoRollRecyclerView;
+import com.sjjd.wyl.baseandroid.view.ImageBanner;
 import com.sjjd.wyl.baseandroid.view.ItemScrollLayoutManager;
+import com.sjjd.wyl.baseandroid.view.VerticalScrollTextView;
 import com.xuhao.didi.core.iocore.interfaces.IPulseSendable;
 import com.xuhao.didi.core.iocore.interfaces.ISendable;
 import com.xuhao.didi.core.pojo.OriginalData;
@@ -49,22 +52,15 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity2 {
 
-    @BindView(R.id.sbSpeed)
-    SeekBar mSbSpeed;
-    @BindView(R.id.speed)
-    TextView mSpeed;
-    @BindView(R.id.spVolume)
-    SeekBar mSpVolume;
-    @BindView(R.id.volume)
-    TextView mVolume;
-    @BindView(R.id.etText)
-    EditText mEtText;
-    @BindView(R.id.btnPlayer)
     Button mBtnPlayer;
     @BindView(R.id.tvMac)
     TextView mTvMac;
     @BindView(R.id.rlv)
     AutoRollRecyclerView mRlv;
+    @BindView(R.id.banner)
+    ImageBanner mBanner;
+    @BindView(R.id.tvVs)
+    VerticalScrollTextView mTvVs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +81,14 @@ public class MainActivity extends BaseActivity2 {
             }
         });
 */
+
+        mTvVs.setText("阿松大好收到好耍到后饿哦了阿松大好收到好耍到后饿阿松大好收到好耍到后饿");
+
+        mTvVs.setTextSize(DisplayUtil.sp2px(mContext, 10));
+        mTvVs.setSpeed(0.5f);
+        mTvVs.setLineSpace(18);
+        mTvVs.setGraphSpace(100);
+
         LogUtils.e(TAG, "onCreate: ");
         initListener();
         hasPermission();
@@ -170,7 +174,7 @@ public class MainActivity extends BaseActivity2 {
         mHolder.mBtnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // Process.killProcess(Process.myPid());
+                // Process.killProcess(Process.myPid());
                 showLoading("asdasd");
             }
         });
@@ -284,9 +288,28 @@ public class MainActivity extends BaseActivity2 {
     @Override
     public void initData() {
         super.initData();
+        String[] mStrings = new String[]{
+                "https://s1.ax1x.com/2018/11/16/ixCTOJ.jpg",
+                "https://s1.ax1x.com/2018/11/16/ixCoy4.jpg",
+                "https://s1.ax1x.com/2018/11/16/ixCIlF.jpg",
+                "https://s1.ax1x.com/2018/11/16/ixC5SU.jpg",
+                "https://s1.ax1x.com/2018/11/16/ixChWT.jpg",
+                "https://s1.ax1x.com/2018/11/16/ixCfYV.jpg",
+                "https://s1.ax1x.com/2018/11/16/ixCWF0.jpg",
+                "https://s1.ax1x.com/2018/11/16/ixC2oq.jpg",
+                "https://s1.ax1x.com/2018/11/16/ixCgwn.jpg"
+        };
+
+        List<Banner> mBanners = new ArrayList<>();
+        for (int i = 0; i < mStrings.length; i++) {
+            Banner nb = new Banner();
+            nb.setUrl(mStrings[i]);
+            mBanners.add(nb);
+        }
+        mBanner.startPlayLoop(mBanners, 3000, 500);
 
         List<String> data = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 1; i++) {
             data.add("test" + i);
 
         }
@@ -296,15 +319,16 @@ public class MainActivity extends BaseActivity2 {
                 holder.setText(R.id.tvContent, s);
             }
         };
+        mAdapter.setLoop(false);
         ItemScrollLayoutManager mManager = new ItemScrollLayoutManager(mContext, RecyclerView.VERTICAL);
-        mAdapter.setLoop(true);
+        //   mAdapter.setLoop(true);
 
         mRlv.setAdapter(mAdapter);
         mRlv.setLayoutManager(mManager);
         mManager.setScrollTime(100);
         mRlv.setTypeTime(AutoRollRecyclerView.ROLL_ITEM, 1000);
 
-        mRlv.start();
+        //   mRlv.start();
         //showLoading("aaaaaa");
 
      /*   mBtnPlayer.setOnClickListener(new View.OnClickListener() {
@@ -366,11 +390,11 @@ public class MainActivity extends BaseActivity2 {
             mTTSPlayer.setOption(SpeechConstants.TTS_KEY_VOICE_SPEED, 100);
         }
 */
-      /*  SocketManager.getInstance(mContext).startTcpConnection("47.105.47.30", "8282");
-        SocketManager.getInstance(mContext).getTcpSocket().setPING("{\"type\":\"ping\"}");
+        SocketManager.getInstance(mContext).startTcpConnection("192.168.2.188", "8282", "{\"type\":\"ping\"}");
+        SocketManager.getInstance(mContext).setPING("{\"type\":\"ping\"}");
         SocketManager.getInstance(mContext).getTcpSocket().setTIME_OUT(30 * 1000);
         SocketManager.getInstance(mContext).getTcpSocket().setHEARTBEAT_RATE(10 * 1000);
-        SocketManager.getInstance(mContext).setHandler(mDataHandler);*/
+        SocketManager.getInstance(mContext).setHandler(mDataHandler);
         //initSocket();
 
 
