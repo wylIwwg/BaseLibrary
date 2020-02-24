@@ -1,4 +1,4 @@
-package com.sjjd.wyl.baseandroid.register;
+package com.sjjd.wyl.baseandroid.tools;
 
 
 /**
@@ -43,11 +43,11 @@ import javax.crypto.spec.SecretKeySpec;
  *     desc  : utils about encrypt
  * </pre>
  */
-public final class EncryptUtils {
+public final class ToolEncrypt {
 
     private static final String CipherMode = "AES/ECB/PKCS5Padding";
 
-    private EncryptUtils() {
+    private ToolEncrypt() {
         throw new UnsupportedOperationException("u can't instantiate me...");
     }
 

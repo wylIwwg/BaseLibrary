@@ -3,8 +3,8 @@ package com.sjjd.wyl.baseandroid.thread;
 import android.content.Context;
 import android.os.Handler;
 
-import com.sjjd.wyl.baseandroid.utils.IConfigs;
-import com.sjjd.wyl.baseandroid.utils.LogUtils;
+import com.sjjd.wyl.baseandroid.tools.IConfigs;
+import com.sjjd.wyl.baseandroid.tools.ToolLog;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -27,7 +27,7 @@ public class NetThread extends BaseThread {
 
     @Override
     protected void initData() {
-        LogUtils.e(TAG, "initData: " + url);
+        ToolLog.e(TAG, "initData: " + url);
         try {
 
             if (isConnected(url)) {
@@ -36,7 +36,7 @@ public class NetThread extends BaseThread {
                 mHandler.sendEmptyMessage(IConfigs.NET_URL_ERROR);
             }
         } catch (Exception e) {
-            LogUtils.e(TAG, "initData: " + e.getMessage());
+            ToolLog.e(TAG, "initData: " + e.getMessage());
         }
 
     }
@@ -58,13 +58,13 @@ public class NetThread extends BaseThread {
             con = null;
             url = null;
 
-            LogUtils.e(TAG, "isConnect:  state = " + state);
+            ToolLog.e(TAG, "isConnect:  state = " + state);
             if (state == 200) {
                 return true;
             }
 
         } catch (Exception ex) {
-            LogUtils.e(TAG, "isConnect: Exception = " + ex.getMessage());
+            ToolLog.e(TAG, "isConnect: Exception = " + ex.getMessage());
             con = null;
             url = null;
             return false;

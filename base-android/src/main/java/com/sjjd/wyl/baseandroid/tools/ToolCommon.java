@@ -1,9 +1,9 @@
-package com.sjjd.wyl.baseandroid.utils;
+package com.sjjd.wyl.baseandroid.tools;
 
 /**
  * Created by wyl on 2019/9/2.
  */
-public class CommonUtil {
+public class ToolCommon {
 
     //姓名星号处理
     public static String SplitStarName(String name, String ch, int start, int end) {

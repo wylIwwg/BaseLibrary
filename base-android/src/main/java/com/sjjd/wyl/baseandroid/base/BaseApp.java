@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Environment;
+import android.widget.Toast;
 
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
@@ -12,10 +13,9 @@ import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 import com.sjjd.wyl.baseandroid.R;
 import com.sjjd.wyl.baseandroid.anr.ANRThread;
 import com.sjjd.wyl.baseandroid.crash.config.CrashConfig;
-import com.sjjd.wyl.baseandroid.tts.TTSManager;
-import com.sjjd.wyl.baseandroid.utils.AppUtils;
-import com.sjjd.wyl.baseandroid.utils.ToastUtils;
-import com.tencent.bugly.crashreport.CrashReport;
+import com.sjjd.wyl.baseandroid.tools.ToolApp;
+import com.sjjd.wyl.baseandroid.tools.ToolSP;
+import com.sjjd.wyl.baseandroid.tools.ToolTts;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.runtime.Permission;
@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+import es.dmoral.toasty.Toasty;
 import okhttp3.OkHttpClient;
 
 /**
@@ -51,6 +52,7 @@ public class BaseApp extends Application {
         super.onCreate();
         new ANRThread().start();
         mContext = this;
+        ToolSP.init(this);
     }
 
 
@@ -66,24 +68,19 @@ public class BaseApp extends Application {
                 new Action<List<String>>() {
                     @Override
                     public void onAction(List<String> data) {
-                        if (TTSManager.getInstance(mContext).existsTTsFile(dir)) {
-                            TTSManager.getInstance(mContext).initTts(mContext);
-                        } else {
-                            TTSManager.getInstance(mContext).copyFile();
+                        if (!ToolTts.getInstance(mContext).existsTTsFile(dir)) {
+                            ToolTts.getInstance(mContext).copyFile();
                         }
                     }
                 }
         ).onDenied(new Action<List<String>>() {
             @Override
             public void onAction(List<String> data) {
-                ToastUtils.showToast(mContext, "权限拒绝，将无法播放语音", 2000);
+                Toasty.error(mContext, "权限拒绝，将无法播放语音", Toast.LENGTH_LONG, true).show();
             }
         }).start();
     }
 
-    public void initBugly(String key) {
-        CrashReport.initCrashReport(getApplicationContext(), key, true);
-    }
 
     public void initDebug(Class<Activity> activity) {
         CrashConfig.Builder.create()
@@ -160,7 +157,7 @@ public class BaseApp extends Application {
     private void handleException(Throwable ex) {
         String s = formatCrashInfo(ex);
         saveLogFile2SDcard(s, true);
-        AppUtils.restartApp(mContext);
+        ToolApp.restartApp(mContext);
     }
 
 
@@ -181,7 +178,7 @@ public class BaseApp extends Application {
         sb.append("----------------------------").append(lineSeparator);
         sb.append(logTime).append(lineSeparator);
         sb.append(getPackageName()).append(lineSeparator);
-        sb.append(AppUtils.getAppVersionCode(mContext, getPackageName())).append(lineSeparator);
+        sb.append(ToolApp.getAppVersionCode(mContext, getPackageName())).append(lineSeparator);
         sb.append(exception).append(lineSeparator);
         sb.append("----------------------------").append(lineSeparator).append(lineSeparator);
 

@@ -7,7 +7,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 
 import com.lzy.okgo.OkGo;
-import com.sjjd.wyl.baseandroid.utils.IConfigs;
+import com.sjjd.wyl.baseandroid.tools.IConfigs;
 
 
 /**

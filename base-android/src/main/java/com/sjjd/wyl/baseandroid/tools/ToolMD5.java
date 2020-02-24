@@ -1,4 +1,4 @@
-package com.sjjd.wyl.baseandroid.utils;
+package com.sjjd.wyl.baseandroid.tools;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
  * Created by wyl on 2018/4/24.
  */
 
-public class MD5Util {
+public class ToolMD5 {
 
     /**
      * md5加密

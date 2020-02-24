@@ -23,11 +23,12 @@ import android.widget.Toast;
 
 import com.sjjd.wyl.baseandroid.R;
 import com.sjjd.wyl.baseandroid.bean.Register;
-import com.sjjd.wyl.baseandroid.register.RegisterUtils;
-import com.sjjd.wyl.baseandroid.utils.DisplayUtil;
-import com.sjjd.wyl.baseandroid.utils.IConfigs;
-import com.sjjd.wyl.baseandroid.utils.LogUtils;
-import com.sjjd.wyl.baseandroid.utils.ToastUtils;
+import com.sjjd.wyl.baseandroid.bean.RegisterResult;
+import com.sjjd.wyl.baseandroid.tools.ToolRegister;
+import com.sjjd.wyl.baseandroid.tools.ToolDisplay;
+import com.sjjd.wyl.baseandroid.tools.IConfigs;
+import com.sjjd.wyl.baseandroid.tools.ToolLog;
+import com.sjjd.wyl.baseandroid.tools.ToolToast;
 import com.sjjd.wyl.baseandroid.view.MEditView;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
@@ -113,7 +114,7 @@ public class BaseActivity2 extends AppCompatActivity implements BaseDataHandler.
     @Override
     protected void onResume() {
         super.onResume();
-        DisplayUtil.hideBottomUIMenu(this);
+        ToolDisplay.hideBottomUIMenu(this);
     }
 
     public void hasPermission() {
@@ -152,7 +153,7 @@ public class BaseActivity2 extends AppCompatActivity implements BaseDataHandler.
     public void showLoading(String tips, View view) {
 
         View mSettingView = LayoutInflater.from(mContext).inflate(R.layout.layout_loading, null);
-        popLoading = new PopupWindow(mSettingView, DisplayUtil.dip2px(mContext, 200), DisplayUtil.dip2px(mContext, 200), true);
+        popLoading = new PopupWindow(mSettingView, ToolDisplay.dip2px(mContext, 200), ToolDisplay.dip2px(mContext, 200), true);
         popLoading.setFocusable(false);// 点击back退出pop
         popLoading.setOutsideTouchable(false);
         // popLoading.setElevation(5);
@@ -162,11 +163,11 @@ public class BaseActivity2 extends AppCompatActivity implements BaseDataHandler.
         if (!popLoading.isShowing()) {
             popLoading.showAtLocation(view, Gravity.CENTER, 1, 1);
         }
-        DisplayUtil.hideBottomUIMenu(this);
+        ToolDisplay.hideBottomUIMenu(this);
         popLoading.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
-                DisplayUtil.hideBottomUIMenu((Activity) mContext);
+                ToolDisplay.hideBottomUIMenu((Activity) mContext);
             }
         });
 
@@ -212,14 +213,14 @@ public class BaseActivity2 extends AppCompatActivity implements BaseDataHandler.
 
     public void isDeviceRegistered() {
 
-        int mRegistered = RegisterUtils.getInstance(mContext).isDeviceRegistered();
+        RegisterResult mRegistered = ToolRegister.getInstance(mContext).checkDeviceRegistered();
 
-        LogUtils.e(TAG, "onCreate: " + mRegistered);
-        switch (mRegistered) {
+        ToolLog.e(TAG, "onCreate: " + mRegistered);
+        switch (mRegistered.getRegisterCode()) {
             case IConfigs.REGISTER_FORBIDDEN://禁止注册/未注册
                 //请求注册
                 //请求信息密文
-                REGISTER_STR = RegisterUtils.getInstance(mContext).register2Base64(false, MARK);
+                REGISTER_STR = ToolRegister.getInstance(mContext).register2Base64(false, MARK);
                 RegisterCode = IConfigs.DEVICE_FORBIDDEN;
                 break;
             case IConfigs.REGISTER_FOREVER://永久注册
@@ -227,21 +228,20 @@ public class BaseActivity2 extends AppCompatActivity implements BaseDataHandler.
                 isRegistered = true;
                 break;
             default://注册时间
-                Register mRegister = RegisterUtils.getInstance(mContext).getRegister();
+                Register mRegister = ToolRegister.getInstance(mContext).getRegister();
                 if (mRegister != null) {
                     isRegistered = true;
                     RegisterCode = IConfigs.DEVICE_REGISTERED;
-                    String mDate = mRegister.getDate();//获取注册时间
-                    long rt = Long.parseLong(mDate);
+                    long rt = Long.parseLong(mRegister.getDate());//获取注册时间
                     long mMillis = System.currentTimeMillis();//本地时间
 
-                    Date newDate2 = new Date(rt + (long) mRegistered * 24 * 60 * 60 * 1000);
+                    Date newDate2 = new Date(rt + (long) mRegistered.getRegisterCode() * 24 * 60 * 60 * 1000);
 
                     //到期了 再次申请注册
                     if (newDate2.getTime() < mMillis) {
-                        ToastUtils.showToast(mContext, "设备注册已过期！", 2000);
+                        ToolToast.showToast(mContext, "设备注册已过期！", 2000);
                         RegisterCode = IConfigs.DEVICE_OUTTIME;
-                        REGISTER_STR = RegisterUtils.getInstance(mContext).register2Base64(false, MARK);
+                        REGISTER_STR = ToolRegister.getInstance(mContext).register2Base64(false, MARK);
                         isRegistered = false;
                     }
 
@@ -283,7 +283,7 @@ public class BaseActivity2 extends AppCompatActivity implements BaseDataHandler.
                         inputMethodManager.hideSoftInputFromWindow(token,
                                 InputMethodManager.HIDE_NOT_ALWAYS);
 
-                    DisplayUtil.hideBottomUIMenu(this);
+                    ToolDisplay.hideBottomUIMenu(this);
                 }
             }
         } catch (Exception e) {

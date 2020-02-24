@@ -1,4 +1,4 @@
-package com.sjjd.wyl.baseandroid.utils;
+package com.sjjd.wyl.baseandroid.tools;
 
 import android.content.Context;
 import android.os.Handler;
@@ -7,7 +7,7 @@ import android.widget.Toast;
 /**
  * Created by wyl on 2018/10/23.
  */
-public class ToastUtils {
+public class ToolToast {
     private static Toast mToast;
     private static Handler mHandler = new Handler();
     private static Runnable r = new Runnable() {

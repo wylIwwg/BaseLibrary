@@ -1,4 +1,4 @@
-package com.sjjd.wyl.baseandroid.utils;
+package com.sjjd.wyl.baseandroid.tools;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,7 @@ import android.content.pm.PackageManager;
 /**
  * Created by wyl on 2018/11/13.
  */
-public class AppUtils {
+public class ToolApp {
 
     //重启应用
     public static void restartApp(Context context) {

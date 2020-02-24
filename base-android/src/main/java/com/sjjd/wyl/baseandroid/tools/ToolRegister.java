@@ -1,4 +1,4 @@
-package com.sjjd.wyl.baseandroid.register;
+package com.sjjd.wyl.baseandroid.tools;
 
 import android.content.Context;
 import android.os.Environment;
@@ -7,9 +7,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.sjjd.wyl.baseandroid.bean.Register;
-import com.sjjd.wyl.baseandroid.utils.IConfigs;
-import com.sjjd.wyl.baseandroid.utils.DeviceUtil;
-import com.sjjd.wyl.baseandroid.utils.LogUtils;
+import com.sjjd.wyl.baseandroid.bean.RegisterResult;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,17 +16,18 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Date;
 
 import es.dmoral.toasty.Toasty;
 
 /**
  * Created by wyl on 2019/3/29.
  */
-public class RegisterUtils {
+public class ToolRegister {
 
 
-    public static String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCA3aNm/ra4JgBYZzABSy5TAepEuSCE2x8OqBwtCAXITv/Ei0cn/l09ot4kIYXHZQ9hZ+B1W558AGAxfHZkrYZNj1Hn53AXVqw4/ojeP3RyfcXo8GJom/F9+1kd56NqEm/iv2ETB3vcrGwFJOldy7lMEXfHDtFQaj+i2U+eVfckUQIDAQAB";
-    public static String privateKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAIDdo2b+trgmAFhnMAFLLlMB6kS5IITbHw6oHC0IBchO/8SLRyf+XT2i3iQhhcdlD2Fn4HVbnnwAYDF8dmSthk2PUefncBdWrDj+iN4/dHJ9xejwYmib8X37WR3no2oSb+K/YRMHe9ysbAUk6V3LuUwRd8cO0VBqP6LZT55V9yRRAgMBAAECgYBq5vKp+33az/OTYq6pNBQO2lTcg/MdI6XlA8Kz/KbHX/m/s4bo/5OcESNVN9YB7q1Osdy7nrCfz7P8+XJB3M2/FFTm9iHsu24P6P1IxvjV05jir8g7ycs4RoZuxk2+2Ln8Kd6H+0M7qL528os5YRWu0PUhMOR1y103pqWT20UTkQJBAMwFoJ9xvcaH558Iqy/rPpre/25SyfnZbq/KrI2tv18ItfW5flXq3dfVrOYy9i6zWPu9gL9npuPjY5wK3mhdpyUCQQChsk0iT1+uyFhdg0VJeV4+fjd6Fukq7NjqRUIWGXxHoondtLM4qe7rcWMkFXN0U0gZH3XE/KRqrEM20jsXMma9AkEAwoiHHCDe2+MQJiKk378F5bPFiFMmRLZfBP1SRJErzRjILzGcVZ3pw3f5MVHcTLEzom2Rym+xwM87VjlC0e6ihQJAdoE1lMK1bmR4lrhhbFLd5lEcmYb3BjWlWDTAFXBCLEIMZodLnmi0qKtmLIjoH8X1niv3ZRJ/8YokjKYRFpQixQJAXP70G3X9n/OaPR2uCATh2LGcaaLBHBiqKcLGxmkfFTlbl811nG+sW5gyWIhiv+3/JmCmKCTTRhWTjs/YjKdAeQ==";
+    private static String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCA3aNm/ra4JgBYZzABSy5TAepEuSCE2x8OqBwtCAXITv/Ei0cn/l09ot4kIYXHZQ9hZ+B1W558AGAxfHZkrYZNj1Hn53AXVqw4/ojeP3RyfcXo8GJom/F9+1kd56NqEm/iv2ETB3vcrGwFJOldy7lMEXfHDtFQaj+i2U+eVfckUQIDAQAB";
+    private static String privateKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAIDdo2b+trgmAFhnMAFLLlMB6kS5IITbHw6oHC0IBchO/8SLRyf+XT2i3iQhhcdlD2Fn4HVbnnwAYDF8dmSthk2PUefncBdWrDj+iN4/dHJ9xejwYmib8X37WR3no2oSb+K/YRMHe9ysbAUk6V3LuUwRd8cO0VBqP6LZT55V9yRRAgMBAAECgYBq5vKp+33az/OTYq6pNBQO2lTcg/MdI6XlA8Kz/KbHX/m/s4bo/5OcESNVN9YB7q1Osdy7nrCfz7P8+XJB3M2/FFTm9iHsu24P6P1IxvjV05jir8g7ycs4RoZuxk2+2Ln8Kd6H+0M7qL528os5YRWu0PUhMOR1y103pqWT20UTkQJBAMwFoJ9xvcaH558Iqy/rPpre/25SyfnZbq/KrI2tv18ItfW5flXq3dfVrOYy9i6zWPu9gL9npuPjY5wK3mhdpyUCQQChsk0iT1+uyFhdg0VJeV4+fjd6Fukq7NjqRUIWGXxHoondtLM4qe7rcWMkFXN0U0gZH3XE/KRqrEM20jsXMma9AkEAwoiHHCDe2+MQJiKk378F5bPFiFMmRLZfBP1SRJErzRjILzGcVZ3pw3f5MVHcTLEzom2Rym+xwM87VjlC0e6ihQJAdoE1lMK1bmR4lrhhbFLd5lEcmYb3BjWlWDTAFXBCLEIMZodLnmi0qKtmLIjoH8X1niv3ZRJ/8YokjKYRFpQixQJAXP70G3X9n/OaPR2uCATh2LGcaaLBHBiqKcLGxmkfFTlbl811nG+sW5gyWIhiv+3/JmCmKCTTRhWTjs/YjKdAeQ==";
     private static final String TAG = " Register ";
     private static String PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/sjjd";
 
@@ -36,10 +35,10 @@ public class RegisterUtils {
     private static String transform = "RSA/NONE/PKCS1Padding";
     //private static String transform = "RSA";
     private static int base64Mode = Base64.DEFAULT;
-    byte[] mPublicBytes = Base64.decode(publicKey, base64Mode);
-    byte[] mPrivateBytes = Base64.decode(privateKey, base64Mode);
+    private byte[] mPublicBytes = Base64.decode(publicKey, base64Mode);
+    private byte[] mPrivateBytes = Base64.decode(privateKey, base64Mode);
 
-    private static RegisterUtils instance;
+    private static ToolRegister instance;
     private static Context mContext;
     private Register mRegister;
 
@@ -47,7 +46,7 @@ public class RegisterUtils {
         return mRegister;
     }
 
-    public RegisterUtils(Context context, String privateKey, String publicKey) {
+    private ToolRegister(Context context, String privateKey, String publicKey) {
         if (mContext == null) mContext = context;
         if (privateKey != null) {
             mPrivateBytes = Base64.decode(privateKey, base64Mode);
@@ -57,16 +56,16 @@ public class RegisterUtils {
         }
     }
 
-    public static RegisterUtils getInstance(Context context) {
+    public static ToolRegister getInstance(Context context) {
 
         return getInstance(context, null, null);
 
     }
 
-    public static RegisterUtils getInstance(Context context, String privateKey, String publicKey) {
+    public static ToolRegister getInstance(Context context, String privateKey, String publicKey) {
         if (mContext == null) mContext = context;
         if (instance == null) {
-            instance = new RegisterUtils(context, privateKey, publicKey);
+            instance = new ToolRegister(context, privateKey, publicKey);
         }
         return instance;
     }
@@ -80,7 +79,7 @@ public class RegisterUtils {
      */
     public String register2Base64(boolean just64, String mark) {
 
-        String mac = DeviceUtil.getMachineHardwareAddress();
+        String mac = ToolDevice.getMachineHardwareAddress();
         Register r = new Register();
         r.setIdentity(mac);
         r.setMark(mark);
@@ -93,11 +92,11 @@ public class RegisterUtils {
             mEncode = Base64.encode(mDataBytes, base64Mode);
             result = new String(mEncode);
         } else {
-            mEncode = EncryptUtils.encryptRSA(mDataBytes, mPublicBytes, true, transform);
+            mEncode = ToolEncrypt.encryptRSA(mDataBytes, mPublicBytes, true, transform);
             result = Base64.encodeToString(mEncode, base64Mode);
         }
 
-        LogUtils.e(TAG, "Register: 加密后的数据： " + result);
+        ToolLog.e(TAG, "Register: 加密后的数据： " + result);
         return result;
 
     }
@@ -114,7 +113,7 @@ public class RegisterUtils {
             if (data == null || data.equals(""))
                 return false;
             String result = str2Regsiter(data);//解密数据
-            LogUtils.e(TAG, "registerDevice: 允许注册： " + result);
+            ToolLog.e(TAG, "registerDevice: 允许注册： " + result);
             if (result != null) {
                 mRegister = JSON.parseObject(result, Register.class);
                 if (mRegister != null) {
@@ -171,27 +170,49 @@ public class RegisterUtils {
         return null;
     }
 
+
     /**
-     * //判断设备是否注册
-     * 返回设备注册时间
+     * 检测设备是否注册
+     * 设备注册信息
      *
      * @return
      */
-    public int isDeviceRegistered() {
+    public RegisterResult checkDeviceRegistered() {
+        RegisterResult mResult = new RegisterResult();
         try {
             mRegister = getRegisterText();//将数据转成对象
             if (mRegister != null) {
                 //判断密钥里面的mac值和设备mac是否一致
-                String mac = DeviceUtil.getMachineHardwareAddress();
+                String mac = ToolDevice.getMachineHardwareAddress();
                 if (mac == null || mac.equals("02:00:00:00:00:00")) {
                     Toasty.error(mContext, "MAC获取不正确：" + mac, Toast.LENGTH_LONG, true).show();
-                    return IConfigs.REGISTER_FORBIDDEN;
+                    // mResult.setRegistered(false);
+                    // mResult.setRegisterCode(IConfigs.REGISTER_FORBIDDEN);
+                    mResult.setRegisterStr(register2Base64(false, ToolSP.init(mContext).getDIYString(IConfigs.SP_APP_TYPE)));
+                    return mResult;
                 }
                 if (mRegister.getIdentity().equals(mac)) {
                     String mLimit = mRegister.getLimit();
                     mRegister.getDate();
                     if (mLimit != null && mLimit.length() > 0) {
-                        return Integer.parseInt(mLimit);
+                        int mInt = Integer.parseInt(mLimit);
+                        if (mInt <= -1) {
+                            mResult.setRegistered(true);
+                            mResult.setRegisterCode(IConfigs.DEVICE_REGISTERED);
+                        } else if (mInt > 0) {
+                            mResult.setRegistered(true);
+                            mResult.setRegisterCode(IConfigs.DEVICE_REGISTERED);
+                            long rt = Long.parseLong(mRegister.getDate());//获取注册时间
+                            long mMillis = System.currentTimeMillis();//本地时间
+                            Date newDate2 = new Date(rt + (long) mInt * 24 * 60 * 60 * 1000);
+                            //到期了 再次申请注册
+                            if (newDate2.getTime() < mMillis) {
+                                mResult.setRegisterCode(IConfigs.DEVICE_OUTTIME);
+                                mResult.setRegistered(false);
+                                mResult.setRegisterStr(ToolRegister.getInstance(mContext).register2Base64(false, ToolSP.init(mContext).getDIYString(IConfigs.SP_APP_TYPE)));
+                            }
+                        }
+                        return mResult;
                     }
                 }
 
@@ -200,9 +221,10 @@ public class RegisterUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return IConfigs.REGISTER_FORBIDDEN;
+        return mResult;
 
     }
+
 
     /**
      * 将字符串解密为明文数据
@@ -214,12 +236,12 @@ public class RegisterUtils {
         //解密
         try {
             byte[] mDataBytes = Base64.decode(data, base64Mode);
-            byte[] mDecryptBytes = EncryptUtils.decryptRSA(mDataBytes, mPrivateBytes, false, transform);
+            byte[] mDecryptBytes = ToolEncrypt.decryptRSA(mDataBytes, mPrivateBytes, false, transform);
 
             String b64 = Base64.encodeToString(mDecryptBytes, base64Mode);
             byte[] mEncode = Base64.decode(b64, base64Mode);
             String result = new String(mEncode);
-            LogUtils.e(TAG, "Register: 解密后的数据： " + result);
+            ToolLog.e(TAG, "Register: 解密后的数据： " + result);
             return result;
         } catch (Exception e) {
             e.printStackTrace();

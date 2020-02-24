@@ -1,4 +1,4 @@
-package com.sjjd.wyl.baseandroid.utils;
+package com.sjjd.wyl.baseandroid.tools;
 
 import android.util.Log;
 
@@ -6,7 +6,7 @@ import android.util.Log;
  * Created by wyl on 2018/5/22.
  */
 
-public class LogUtils {
+public class ToolLog {
 
     public static boolean showLog = true;//是否打印日志
     static int LOG_MAX_LENGTH = 2000;

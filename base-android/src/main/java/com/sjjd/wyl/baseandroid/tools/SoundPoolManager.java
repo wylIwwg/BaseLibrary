@@ -1,4 +1,4 @@
-package com.sjjd.wyl.baseandroid.utils;
+package com.sjjd.wyl.baseandroid.tools;
 
 /**
  * Created by wyl on 2018/10/13.
@@ -70,7 +70,7 @@ public class SoundPoolManager {
         if (!loaded) {
             waitPlaying = true;
         }
-        LogUtils.e(TAG, "playRinging: " + loaded + " " + playing);
+        ToolLog.e(TAG, "playRinging: " + loaded + " " + playing);
         if (loaded && !playing) {
             ringingStreamId = soundPool.play(rightSoundId, volume, volume, 1, -1, 1f);
             playing = true;

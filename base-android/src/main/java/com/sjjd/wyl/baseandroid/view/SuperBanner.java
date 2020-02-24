@@ -13,9 +13,9 @@ import android.view.MotionEvent;
 
 import java.lang.ref.WeakReference;
 
-public class AutoRollRecyclerView extends RecyclerView {
-    private static final String TAG = " AutoRollRecyclerView ";
-    private long rollTime = 100;//
+public class SuperBanner extends RecyclerView {
+    private static final String TAG = " SuperBanner ";
+    private long rollTime = 100;//默认像素滚动时间 ms
     AutoPollTask autoPollTask;
     private boolean running; //标示是否正在自动轮询
     private boolean canRun;//标示是否可以自动轮询,可在不需要的是否置false
@@ -32,7 +32,7 @@ public class AutoRollRecyclerView extends RecyclerView {
      */
     public void setTypeTime(int rollType, int time) {
         this.rollType = rollType;
-        rollTime = time;
+        this.rollTime = time;
     }
 
     /**
@@ -44,26 +44,26 @@ public class AutoRollRecyclerView extends RecyclerView {
         this.rollType = rollType;
     }
 
-    public AutoRollRecyclerView(Context context) {
-        super(context);
+    public SuperBanner(Context context) {
+        this(context, null);
     }
 
-    public AutoRollRecyclerView(Context context, @Nullable AttributeSet attrs) {
+    public SuperBanner(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         autoPollTask = new AutoPollTask(this);
     }
 
     class AutoPollTask implements Runnable {
-        private final WeakReference<AutoRollRecyclerView> mReference;
+        private final WeakReference<SuperBanner> mReference;
 
         //使用弱引用持有外部类引用->防止内存泄漏
-        public AutoPollTask(AutoRollRecyclerView reference) {
-            this.mReference = new WeakReference<AutoRollRecyclerView>(reference);
+        public AutoPollTask(SuperBanner reference) {
+            this.mReference = new WeakReference<SuperBanner>(reference);
         }
 
         @Override
         public void run() {
-            AutoRollRecyclerView recyclerView = mReference.get();
+            SuperBanner recyclerView = mReference.get();
             if (recyclerView != null && recyclerView.running && recyclerView.canRun) {
 
                 //判断是像素滚动还是item滚动
@@ -91,15 +91,21 @@ public class AutoRollRecyclerView extends RecyclerView {
     }
 
 
+    public void start() {
+        start(false);
+    }
+
     /**
      * 开启:如果正在运行,先停止->再开启
+     *
+     * @param immediate 是否立刻滚动
      */
-    public void start() {
+    public void start(boolean immediate) {
         if (running)
             stop();
         canRun = true;
         running = true;
-        postDelayed(autoPollTask, rollTime);
+        postDelayed(autoPollTask, immediate ? 100 : rollTime);
     }
 
     public void stop() {

@@ -1,4 +1,4 @@
-package com.sjjd.wyl.baseandroid.utils;
+package com.sjjd.wyl.baseandroid.tools;
 
 import android.Manifest;
 import android.app.Service;
@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 /**
  * Created by wyl on 2018/11/22.
  */
-public class DeviceUtil {
+public class ToolDevice {
     /**
      * <p><b>IMEI.</b></p> Returns the unique device ID, for example, the IMEI for GSM and the MEID
      * or ESN for CDMA phones. Return null if device ID is not available.
@@ -184,7 +184,7 @@ public class DeviceUtil {
     /**
      * android 6.0及以上、7.0以下 获取mac地址
      *
-     * @param context
+     * @param
      * @return
      */
    /* public static String getMacAddress(Context context) {
@@ -210,6 +210,16 @@ public class DeviceUtil {
             return mac.toUpperCase();
         else return "";
     }*/
+    public static String getMac() {
+        //优先读取本地文件记录的mac值
+        String mac = ToolFile.readString(IConfigs.PATH_MAC);
+        if (mac == null || mac.length() < 1) {
+            mac = getMachineHardwareAddress();
+            if (mac != null)
+                ToolFile.string2File(IConfigs.PATH_MAC, mac);
+        }
+        return mac;
+    }
 
     /**
      * android 7.0及以上 （2）扫描各个网络接口获取mac地址

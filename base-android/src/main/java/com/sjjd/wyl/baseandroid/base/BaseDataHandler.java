@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
 
-import com.sjjd.wyl.baseandroid.utils.IConfigs;
+import com.sjjd.wyl.baseandroid.tools.IConfigs;
 
 import java.lang.ref.WeakReference;
 
@@ -20,10 +20,10 @@ public class BaseDataHandler extends Handler {
         void userHandler(Message msg);
     }
 
-    public MessageListener mErrorListener;
+    public MessageListener mMessageListener;
 
     public void setMessageListener(MessageListener errorListener) {
-        mErrorListener = errorListener;
+        mMessageListener = errorListener;
     }
 
     public BaseDataHandler(Activity reference) {
@@ -39,13 +39,13 @@ public class BaseDataHandler extends Handler {
             case IConfigs.NET_SERVER_ERROR:
             case IConfigs.NET_UNKNOWN_ERROR:
             case IConfigs.NET_TIMEOUT:
-                if (mErrorListener != null)
-                    mErrorListener.showError(msg.obj == null ? "处理异常" : (String) msg.obj);
+                if (mMessageListener != null)
+                    mMessageListener.showError(msg.obj == null ? "处理异常" : (String) msg.obj);
                 break;
 
         }
         //自定义消息处理
-        if (mErrorListener != null)
-            mErrorListener.userHandler(msg);
+        if (mMessageListener != null)
+            mMessageListener.userHandler(msg);
     }
 }

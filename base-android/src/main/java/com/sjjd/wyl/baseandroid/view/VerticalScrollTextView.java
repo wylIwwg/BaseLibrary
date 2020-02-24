@@ -5,7 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 
-import com.sjjd.wyl.baseandroid.utils.LogUtils;
+import com.sjjd.wyl.baseandroid.tools.ToolLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +87,7 @@ public class VerticalScrollTextView extends android.support.v7.widget.AppCompatT
         txtSize = getTextSize();
         //根据宽度和字体大小，来计算textview显示的行数。
         int textLineNum = (int) (width / txtSize);//6
-        LogUtils.e(TAG, "onMeasure: " + textLineNum + "  " + width + "  " + txt.length() + "  " + lineSpace);
+        ToolLog.e(TAG, "onMeasure: " + textLineNum + "  " + width + "  " + txt.length() + "  " + lineSpace);
         textList.clear();
         StringBuilder builder = null;
         for (int i = 0; i < txt.length(); i++) {
@@ -104,7 +104,7 @@ public class VerticalScrollTextView extends android.support.v7.widget.AppCompatT
             }
 
         }
-        LogUtils.e(TAG, "onMeasure: " + "textSize= " + txtSize + " 行数 = " + textList.size());
+        ToolLog.e(TAG, "onMeasure: " + "textSize= " + txtSize + " 行数 = " + textList.size());
 
         step1 = 0;
         step2 = txtSize * textList.size() + lineSpace * textList.size() + graphSpace;

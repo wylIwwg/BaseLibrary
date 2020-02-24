@@ -5,8 +5,8 @@ package com.sjjd.wyl.baseandroid.socket;
 
 import android.content.Context;
 
-import com.sjjd.wyl.baseandroid.utils.IConfigs;
-import com.sjjd.wyl.baseandroid.utils.LogUtils;
+import com.sjjd.wyl.baseandroid.tools.IConfigs;
+import com.sjjd.wyl.baseandroid.tools.ToolLog;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -26,7 +26,7 @@ import java.util.concurrent.Executors;
  */
 public class TCPSocket {
     private static final String TAG = " TCPSocket ";
-    private static String LABEL = "\n";
+    private String LABEL = "\n";
     private ExecutorService mThreadPool;
     private Socket mSocket;
     private BufferedReader br;
@@ -37,19 +37,12 @@ public class TCPSocket {
     private final Object mObject = new Object();
     private OnConnectionStateListener mListener;
     private OnMessageReceiveListener mMessageListener;
-    private long TIME_OUT = 15 * 1000;//心跳超时时间
-    private long HEARTBEAT_RATE = 5 * 1000;//心跳间隔
+
     private static final long HEARTBEAT_MESSAGE_DURATION = 2 * 1000;//心跳反应时间
     private boolean alive = false;
 
 
-    public void setTIME_OUT(long TIME_OUT) {
-        this.TIME_OUT = TIME_OUT;
-    }
 
-    public void setHEARTBEAT_RATE(long HEARTBEAT_RATE) {
-        this.HEARTBEAT_RATE = HEARTBEAT_RATE;
-    }
 
     private MsgThread mMsgThread;
 
@@ -102,43 +95,29 @@ public class TCPSocket {
 
         @Override
         public void run() {
-            while (alive) {
-                String line = "";
+            if (null != mSocket)
                 try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                byte[] buffer = new byte[1024 * 1024];
-                int length = 0;
-                try {
-                    if (mSocket == null) {
-                        continue;
-                    }
+                    byte[] buffer = new byte[1024 * 1024 * 10];
+                    int length = 0;
                     String message = "";
-                    if (mSocket.isClosed()) {
-                        continue;
-                    }
                     InputStream is = mSocket.getInputStream();
                     synchronized (mObject) {
-                        while (alive && mSocket != null && mSocket.isConnected() && !mSocket.isClosed()) {
-                            if (alive && mSocket != null && mSocket.isConnected() && !mSocket.isClosed() && ((length = is.read(buffer)) != -1)) {
-                                if (length > 0) {
-                                    message = new String(Arrays.copyOf(buffer,
-                                            length));
-                                    handleReceiveTcpMessage(message);
-                                }
+                        while (alive && mSocket != null && mSocket.isConnected() && !mSocket.isClosed() && ((length = is.read(buffer)) != -1)) {
+                            if (length > 0) {
+                                message = new String(Arrays.copyOf(buffer, length));
+                                handleReceiveTcpMessage(message);
                             }
-
                         }
+
                     }
 
                 } catch (IOException e) {
-                    //e.printStackTrace();
+                    e.printStackTrace();
                 }
 
-            }
+
         }
+
     }
 
     private void startReceiveTcpThread() {
@@ -156,29 +135,36 @@ public class TCPSocket {
     String remainder = "";
 
     private void handleReceiveTcpMessage(String line) {
-        LogUtils.e(TAG, "\n接收 tcp 消息：" + line + "\n");
+        ToolLog.e(TAG, "\n接收 tcp 消息：" + line + "\n");
         lastReceiveTime = System.currentTimeMillis();
 
-        /*if (line.contains("pong")) {
-            return;
-        }*/
         if (line.contains(LABEL)) {
             int mIndex = line.indexOf(LABEL);//获取标识符索引
+            ToolLog.e(TAG, "【mIndex】 : " + mIndex);
+            // result += line.replace(LABEL, "");
 
-            result += line.replace(LABEL, "");
-            //result += line.substring(0, mIndex);//获取标识符前段字符
+            // result += line.replace(LABEL, "");
+
+
+            result += line.substring(0, mIndex);//获取标识符前段字符
             // remainder = line.substring(mIndex, line.length() - 1);//获取标识符后段字符
-            LogUtils.e(TAG, "找到标识符 : " + result);
+            ToolLog.e(TAG, "【找到结束符】 : " + result);
             if (result.startsWith("{") && result.endsWith("}")) {
                 if (mMessageListener != null) {
                     mMessageListener.onMessageReceived(result);
-                    result = "";
+                    result="";
+                    String more =line.substring(mIndex+1);
+                    if(more.length()>0){
+                        ToolLog.e(TAG, "【more】 : " + more);
+                        handleReceiveTcpMessage(more);
+                    }
+
                 }
             }
 
         } else {
             result += line;
-            LogUtils.e(TAG, "handleReceiveTcpMessage: " + result);
+            ToolLog.e(TAG, "【等待结束符】: " + result);
         }
 
 
@@ -187,7 +173,7 @@ public class TCPSocket {
     public void sendTcpMessage(String json) {
         if (pw != null)
             pw.println(json);
-        LogUtils.e(TAG, "tcp 消息发送成功..." + json);
+        ToolLog.e(TAG, "tcp 消息发送成功..." + json);
     }
 
     /**
@@ -204,9 +190,9 @@ public class TCPSocket {
                 if (SocketManager.getInstance(mContext).getPING() != null && SocketManager.getInstance(mContext).getPING().length() > 0) {
                     //如果ping不为null 则发送心跳ping
                     long duration = System.currentTimeMillis() - lastReceiveTime;
-                    LogUtils.e(TAG, "timer is onSchedule..." + " duration:" + duration);
-                    if (duration > TIME_OUT) {//若超过十五秒都没收到我的心跳包，则认为对方不在线。
-                        LogUtils.e(TAG, "tcp ping 超时， 断开连接");
+                    ToolLog.e(TAG, "timer is onSchedule..." + " duration:" + duration);
+                    if (duration > SocketManager.getInstance(mContext).getTIME_OUT()) {//若超过十五秒都没收到我的心跳包，则认为对方不在线。
+                        ToolLog.e(TAG, "tcp ping 超时， 断开连接");
                         stopTcpConnection();
                         if (mListener != null) {
                             alive = false;
@@ -217,13 +203,13 @@ public class TCPSocket {
                         //sendTcpMessage(jsonObject.toString());
                     }
                 } else {
-                    LogUtils.e(TAG, "onSchedule: 心跳为空 将不会发送");
+                    ToolLog.e(TAG, "onSchedule: 心跳为空 将不会发送");
                 }
 
             }
 
         });
-        timer.startTimer(0, HEARTBEAT_RATE);
+        timer.startTimer(10, SocketManager.getInstance(mContext).getHEARTBEAT_RATE());
     }
 
     public void stopHeartbeatTimer() {
@@ -251,12 +237,12 @@ public class TCPSocket {
             br = new BufferedReader(new InputStreamReader(is));
             OutputStream os = mSocket.getOutputStream();
             pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os)), true);
-            LogUtils.e(TAG, "tcp 创建成功...");
+            ToolLog.e(TAG, "tcp 创建成功...");
             return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        LogUtils.e(TAG, "tcp 创建失败...");
+        ToolLog.e(TAG, "tcp 创建失败...");
         return false;
     }
 

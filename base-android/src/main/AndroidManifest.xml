@@ -11,16 +11,10 @@
         android:allowBackup="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".base.BaseHospitalActivity">
-        </activity>
         <activity
             android:name=".base.BaseActivity2"
             android:label="@string/title_activity_base_content"
             android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity
-            android:name=".base.BaseRegisterActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan">
         </activity>
         <activity android:name=".base.BaseActivityTopBar">
         </activity>

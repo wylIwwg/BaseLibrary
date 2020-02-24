@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
-import com.sjjd.wyl.baseandroid.utils.IConfigs;
+import com.sjjd.wyl.baseandroid.tools.IConfigs;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,7 +23,7 @@ public class TimeThread extends BaseThread {
     HashMap<String, String> result;
 
     public TimeThread(Context context, Handler handler) {
-        this(context, handler, "yyyy年MM月dd日", "HH:mm:ss", "EEEE");
+        this(context, handler, "yyyy年MM月dd日", "HH:mm", "EEEE");
     }
 
 

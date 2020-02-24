@@ -1,14 +1,16 @@
 package com.sjjd.wyl.baseandroid.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by wyl on 2019/3/26.
  */
-public class Banner {
-    String url;
-    String title;
-    String id;
-    String type;
-    int resId;
+public class Banner implements Serializable {
+    private String url;
+    private String title;
+    private String id;
+    private String type;
+    private int resId;
 
     public String getType() {
         return type == null ? "" : type;

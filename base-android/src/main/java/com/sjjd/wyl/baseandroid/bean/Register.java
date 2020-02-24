@@ -4,11 +4,18 @@ package com.sjjd.wyl.baseandroid.bean;
  * Created by wyl on 2019/4/1.
  */
 public class Register {
-    String identity;//标识 如MAC值
-    String date;//注册时间
-    String limit;//注册限制/天数
-    String mark;//标记
+    private String identity;//标识 如MAC值
+    private String date;//注册时间
+    private String limit;//注册限制/天数
+    private String mark;//标记
 
+    public String getDate() {
+        return date == null ? "" : date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public String getIdentity() {
         return identity == null ? "" : identity;
@@ -18,13 +25,6 @@ public class Register {
         this.identity = identity;
     }
 
-    public String getDate() {
-        return date == null ? "" : date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
 
     public String getLimit() {
         return limit == null ? "" : limit;

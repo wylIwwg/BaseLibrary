@@ -1,4 +1,4 @@
-package com.sjjd.wyl.baseandroid.utils;
+package com.sjjd.wyl.baseandroid.tools;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,14 +35,14 @@ import java.util.regex.Pattern;
  * Created by wyl on 2017/11/17.
  */
 
-public class FileUtils {
+public class ToolFile {
     //压缩包路径 根目录
     public static String SDCard_ZIP_Path = Environment.getExternalStorageDirectory().getPath();
     //压缩包解压目录
     public static String SDCard_OUT_Path = SDCard_ZIP_Path;
 
 
-    public static final String TAG = "FileUtils";
+    public static final String TAG = "ToolFile";
 
 
     /**
@@ -75,7 +76,7 @@ public class FileUtils {
         //获取手机系统的所有APP包名，然后进行一一比较
         List<PackageInfo> pinfo = context.getPackageManager().getInstalledPackages(0);
         for (int i = 0; i < pinfo.size(); i++) {
-            // LogUtils.e(TAG, "isAppInstalled: " + ((PackageInfo) pinfo.get(i)).packageName);
+            // ToolLog.e(TAG, "isAppInstalled: " + ((PackageInfo) pinfo.get(i)).packageName);
             if (((PackageInfo) pinfo.get(i)).packageName.equalsIgnoreCase(packageName))
                 return true;
         }
@@ -92,11 +93,11 @@ public class FileUtils {
         for (int i = 0; i < resolveInfos.size(); i++) {
 
             String appName = resolveInfos.get(i).loadLabel(packageManager).toString();
-            LogUtils.e(TAG, "isAppInstalled2: " + appName);
+            ToolLog.e(TAG, "isAppInstalled2: " + appName);
             if (appLabel.equals(appName)) {
                 String packageName = resolveInfos.get(i).activityInfo.packageName;
-                LogUtils.e(TAG, "isAppInstalled2: " + packageName);
-                LogUtils.e(TAG, "isAppInstalled2: " + resolveInfos.get(i).activityInfo.name);
+                ToolLog.e(TAG, "isAppInstalled2: " + packageName);
+                ToolLog.e(TAG, "isAppInstalled2: " + resolveInfos.get(i).activityInfo.name);
             }
         }
     }
@@ -125,17 +126,17 @@ public class FileUtils {
                 // String name2 = "ABC-9090";
                 //获取到文件名字 如果两文件名都是纯数字
                 if (Pattern.matches("^[0-9]+", name1) && Pattern.matches("^[0-9]+", name1)) {
-                    LogUtils.e(TAG, "compare: 纯数字");
+                    ToolLog.e(TAG, "compare: 纯数字");
                     return Integer.parseInt(name1) - Integer.parseInt(name2);
                 }
                 //名称包含数字和其他字符 比如 ABC-123
                 if (name1.matches("-(?=[0-9])") && name2.matches("-(?=[0-9])")) {
                     //截取数字部分
-                    LogUtils.e(TAG, "compare: 包含数字");
+                    ToolLog.e(TAG, "compare: 包含数字");
                     Pattern p = Pattern.compile("\\d+");
                     Matcher m = p.matcher(name1);
                     if (m.find()) {
-                        LogUtils.e(TAG, "compare: " + m.group());
+                        ToolLog.e(TAG, "compare: " + m.group());
                     }
                 }
                 return 0;
@@ -164,8 +165,8 @@ public class FileUtils {
     }
 
 
-    public static String readJson(String path) {
-        String json = null;
+    public static String readString(String path) {
+        String str = null;
         InputStreamReader isr = null;
         BufferedReader br = null;
         try {
@@ -177,7 +178,7 @@ public class FileUtils {
                 builder.append(line);
             }
             br.close();
-            json = builder.toString();
+            str = builder.toString();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -197,7 +198,7 @@ public class FileUtils {
             }
 
         }
-        return json;
+        return str;
     }
 
     /**
@@ -227,7 +228,7 @@ public class FileUtils {
     }
 
     public static boolean deleteFile(String filePath) {
-        LogUtils.e(TAG, "deleteFile: " + filePath);
+        ToolLog.e(TAG, "deleteFile: " + filePath);
         File file = new File(filePath);
         if (file.isFile() && file.exists()) {
             return file.delete();
@@ -237,7 +238,7 @@ public class FileUtils {
 
     public static boolean deleteDirectory(String filePath) {
         boolean flag = false;
-        LogUtils.e(TAG, "deleteDirectory: " + filePath);
+        ToolLog.e(TAG, "deleteDirectory: " + filePath);
         //如果 filePath 不以文件夹分隔符结尾，自动添加文件分隔符
 
         if (!filePath.endsWith(File.separator)) {
@@ -310,7 +311,7 @@ public class FileUtils {
                 //http://www.usb.org/developers/defined_class/#BaseClassFFh
                 //通过下面的InterfaceClass 来判断到底是哪一种的，例如7就是打印机，8就是usb的U盘
                 if (anInterface.getInterfaceClass() == 8) {
-                    LogUtils.e(TAG, "isUExist: " + usbDevice.getDeviceName() + " " + anInterface.toString());
+                    ToolLog.e(TAG, "isUExist: " + usbDevice.getDeviceName() + " " + anInterface.toString());
                     return getUPath();
                 }
             }
@@ -340,7 +341,7 @@ public class FileUtils {
                     if (items.length > 0) {
                         String path = items[1];//.toLowerCase(Locale.getDefault());
                         // 添加一些判断，确保是sd卡，如果是otg等挂载方式，可以具体分析并添加判断条件
-                        //  LogUtils.e(TAG, "getUPath: " + items[0] + "   " + items[1]+ "   " + items[2]+ "   " + items[3]+ "   " + items[4]+ "   " + items[5]);
+                        //  ToolLog.e(TAG, "getUPath: " + items[0] + "   " + items[1]+ "   " + items[2]+ "   " + items[3]+ "   " + items[4]+ "   " + items[5]);
                         //  Rk3188   /storage/361A-28B5
                         //  Q-E10   /mnt/usb_storage
                         if (path.contains("usb_storage") || (path.contains("storage") && !path.contains("emulated"))) {
@@ -394,6 +395,13 @@ public class FileUtils {
         return true;
     }
 
+    public static void string2File(String path, String content) {
+        try {
+            byte2File(path, content.getBytes("utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void byte2File(String path, byte[] source) {
         try {

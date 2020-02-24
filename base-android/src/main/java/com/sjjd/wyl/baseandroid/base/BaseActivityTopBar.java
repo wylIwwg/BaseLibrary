@@ -19,10 +19,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sjjd.wyl.baseandroid.R;
-import com.sjjd.wyl.baseandroid.utils.AppUtils;
-import com.sjjd.wyl.baseandroid.utils.IConfigs;
-import com.sjjd.wyl.baseandroid.utils.SPUtils;
-import com.sjjd.wyl.baseandroid.utils.ToastUtils;
+import com.sjjd.wyl.baseandroid.tools.ToolApp;
+import com.sjjd.wyl.baseandroid.tools.IConfigs;
+import com.sjjd.wyl.baseandroid.tools.ToolSP;
+import com.sjjd.wyl.baseandroid.tools.ToolToast;
 
 import java.lang.ref.WeakReference;
 
@@ -150,7 +150,7 @@ public class BaseActivityTopBar extends AppCompatActivity {
     }
 
     private void showError(String error) {
-        ToastUtils.showToast(mContext, error, 2000);
+        ToolToast.showToast(mContext, error, 2000);
     }
 
     @Override
@@ -159,7 +159,7 @@ public class BaseActivityTopBar extends AppCompatActivity {
         if (mDataHandler != null) {
             mDataHandler.removeCallbacksAndMessages(null);
         }
-        ToastUtils.clearToast();
+        ToolToast.clearToast();
     }
 
     /**
@@ -224,22 +224,22 @@ public class BaseActivityTopBar extends AppCompatActivity {
             mBtnCommit.setBackgroundResource(btnbg);
         }
 
-        etIp.setText(SPUtils.init(mContext).getDIYString(IConfigs.SP_IP));
-        etNum.setText(SPUtils.init(mContext).getDIYString(IConfigs.SP_WINDOW_NUM));
-        etPort.setText(SPUtils.init(mContext).getDIYString(IConfigs.SP_PORT));
+        etIp.setText(ToolSP.init(mContext).getDIYString(IConfigs.SP_IP));
+        etNum.setText(ToolSP.init(mContext).getDIYString(IConfigs.SP_WINDOW_NUM));
+        etPort.setText(ToolSP.init(mContext).getDIYString(IConfigs.SP_PORT_HTTP));
         //提交
         mBtnCommit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //重新启动应用
-                SPUtils.init(mContext).putDIYString(IConfigs.SP_IP, etIp.getText().toString());
-                SPUtils.init(mContext).putDIYString(IConfigs.SP_WINDOW_NUM, etNum.getText().toString());
-                SPUtils.init(mContext).putDIYString(IConfigs.SP_PORT, etPort.getText().toString());
+                ToolSP.init(mContext).putDIYString(IConfigs.SP_IP, etIp.getText().toString());
+                ToolSP.init(mContext).putDIYString(IConfigs.SP_WINDOW_NUM, etNum.getText().toString());
+                ToolSP.init(mContext).putDIYString(IConfigs.SP_PORT_HTTP, etPort.getText().toString());
                 shouldDestory();
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        AppUtils.restartApp(mContext);
+                        ToolApp.restartApp(mContext);
                     }
                 }, 500);
                 if (pop.isShowing()) {

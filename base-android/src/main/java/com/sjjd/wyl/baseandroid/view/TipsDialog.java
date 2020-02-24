@@ -11,7 +11,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import com.sjjd.wyl.baseandroid.utils.DisplayUtil;
+import com.sjjd.wyl.baseandroid.tools.ToolDisplay;
 
 /**
  * Created by wyl on 2019/10/11.
@@ -75,7 +75,7 @@ public class TipsDialog extends Dialog {
                     InputMethodManager.HIDE_NOT_ALWAYS);
 
         //隐藏导航栏
-        DisplayUtil.hideBottomUIMenu((Activity) mContext);
+        ToolDisplay.hideBottomUIMenu((Activity) mContext);
     }
 
 

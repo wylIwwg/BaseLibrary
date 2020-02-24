@@ -8,7 +8,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.exception.HttpException;
 import com.lzy.okgo.model.Response;
-import com.sjjd.wyl.baseandroid.utils.IConfigs;
+import com.sjjd.wyl.baseandroid.tools.IConfigs;
 
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;

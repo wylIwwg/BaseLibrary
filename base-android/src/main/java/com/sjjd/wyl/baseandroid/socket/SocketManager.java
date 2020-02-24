@@ -6,13 +6,9 @@ package com.sjjd.wyl.baseandroid.socket;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 
-import com.sjjd.wyl.baseandroid.utils.IConfigs;
-import com.sjjd.wyl.baseandroid.utils.LogUtils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.sjjd.wyl.baseandroid.tools.IConfigs;
+import com.sjjd.wyl.baseandroid.tools.ToolLog;
 
 
 /**
@@ -20,20 +16,36 @@ import org.json.JSONObject;
  */
 public class SocketManager {
     private static volatile SocketManager instance = null;
-    private static String TAG = "SocketManager";
-    private UDPSocket udpSocket;
+    private static final String TAG = "SocketManager";
     private TCPSocket tcpSocket;
     private Context mContext;
     private Handler mHandler;
     private String IP;
     private String PORT;
-    private String PING = "";
-    private int delayRequest = 5000;
+    private String PING = "{\"type\":\"ping\"}";
+    private int delayRequest = 5000;//延迟发送
+    private long TIME_OUT = 15 * 1000;//心跳超时时间
+    private long HEARTBEAT_RATE = 5 * 1000;//心跳间隔
 
+    public void setTIME_OUT(long TIME_OUT) {
+        this.TIME_OUT = TIME_OUT;
+    }
+
+    public long getTIME_OUT() {
+        return TIME_OUT;
+    }
+
+    public long getHEARTBEAT_RATE() {
+        return HEARTBEAT_RATE;
+    }
+
+    public void setHEARTBEAT_RATE(long HEARTBEAT_RATE) {
+        this.HEARTBEAT_RATE = HEARTBEAT_RATE;
+    }
 
     public void setPING(String ping) {
         this.PING = ping;
-        LogUtils.e(TAG, "setPING: " + ping);
+        ToolLog.e(TAG, "setPING: " + ping);
     }
 
     public String getPING() {
@@ -64,23 +76,6 @@ public class SocketManager {
         return this;
     }
 
-    public void startUdpConnection() {
-
-        if (udpSocket == null) {
-            udpSocket = new UDPSocket(mContext);
-        }
-
-        // 注册接收消息的接口
-        udpSocket.addOnMessageReceiveListener(new OnMessageReceiveListener() {
-            @Override
-            public void onMessageReceived(String message) {
-                handleUdpMessage(message);
-            }
-        });
-
-        udpSocket.startUDPSocket();
-
-    }
 
     public TCPSocket getTcpSocket() {
         if (tcpSocket == null) {
@@ -89,22 +84,8 @@ public class SocketManager {
         return tcpSocket;
     }
 
-    /**
-     * 处理 udp 收到的消息
-     *
-     * @param message
-     */
-    private void handleUdpMessage(String message) {
-        try {
-            JSONObject jsonObject = new JSONObject(message);
-            String ip = jsonObject.optString(IP);
-            String port = jsonObject.optString(PORT);
-            if (!TextUtils.isEmpty(ip) && !TextUtils.isEmpty(port)) {
-                startTcpConnection(ip, port, PING);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public synchronized void startTcpConnection(String ip, String port) {
+        startTcpConnection(ip, port, PING);
     }
 
     /**
@@ -124,7 +105,7 @@ public class SocketManager {
                 @Override
                 public void onSuccess() {// tcp 创建成功
                     //udpSocket.stopHeartbeatTimer();
-                    LogUtils.e(TAG, "onSuccess: tcp 创建成功");
+                    ToolLog.e(TAG, "onSuccess: tcp 创建成功");
                 }
 
                 @Override
@@ -132,7 +113,7 @@ public class SocketManager {
 
                     switch (errorCode) {
                         case IConfigs.MSG_CREATE_TCP_ERROR:
-                            LogUtils.e(TAG, "onFailed: 连接失败");
+                            ToolLog.e(TAG, "onFailed: 连接失败");
                             tcpSocket = null;
                             if (mHandler != null) {
                                 mHandler.sendEmptyMessage(IConfigs.MSG_CREATE_TCP_ERROR);
@@ -146,7 +127,7 @@ public class SocketManager {
                             }
                             break;
                         case IConfigs.MSG_PING_TCP_TIMEOUT:
-                            LogUtils.e(TAG, "onFailed: 连接超时");
+                            ToolLog.e(TAG, "onFailed: 连接超时");
                             tcpSocket = null;
                             if (mHandler != null) {
                                 mHandler.sendEmptyMessage(IConfigs.MSG_PING_TCP_TIMEOUT);
@@ -170,7 +151,7 @@ public class SocketManager {
                         msg.obj = message;
                         mHandler.sendMessage(msg);
                     } else {
-                        LogUtils.e(TAG, "onMessageReceived: " + message);
+                        ToolLog.e(TAG, "onMessageReceived: " + message);
                     }
                 }
             });
@@ -188,11 +169,6 @@ public class SocketManager {
 
     public void stopSocket() {
 
-        if (udpSocket != null) {
-            udpSocket.stopHeartbeatTimer();
-            udpSocket.stopUDPSocket();
-            udpSocket = null;
-        }
         if (tcpSocket != null) {
             tcpSocket.stopHeartbeatTimer();
             tcpSocket.stopTcpConnection();

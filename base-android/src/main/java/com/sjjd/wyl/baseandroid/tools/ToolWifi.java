@@ -1,4 +1,4 @@
-package com.sjjd.wyl.baseandroid.utils;
+package com.sjjd.wyl.baseandroid.tools;
 
 import android.content.Context;
 import android.net.DhcpInfo;
@@ -16,25 +16,25 @@ import java.util.List;
 /**
  * Created by wyl on 2018/11/22.
  */
-public class WifiUtil {
+public class ToolWifi {
     private static final String TAG = "LocationUtils";
 
-    private static volatile WifiUtil instance = null;
+    private static volatile ToolWifi instance = null;
 
     private WifiManager mWifiManager;
 
     private Context mContext;
 
-    private WifiUtil(Context context) {
+    private ToolWifi(Context context) {
         mContext = context;
         mWifiManager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
     }
 
-    public static WifiUtil getInstance(Context context) {
+    public static ToolWifi getInstance(Context context) {
         if (instance == null) {
-            synchronized (WifiUtil.class) {
+            synchronized (ToolWifi.class) {
                 if (instance == null) {
-                    instance = new WifiUtil(context);
+                    instance = new ToolWifi(context);
                 }
             }
         }

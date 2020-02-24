@@ -1,4 +1,4 @@
-package com.sjjd.wyl.baseandroid.utils;
+package com.sjjd.wyl.baseandroid.tools;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,7 +9,7 @@ import android.view.View;
  * Created by wyl on 2018/7/23.
  */
 
-public class DisplayUtil {
+public class ToolDisplay {
     /**
      * 将px值转换为dip或dp值，保证尺寸大小不变
      *

@@ -1,11 +1,8 @@
-package com.sjjd.wyl.baseandroid.tts;
+package com.sjjd.wyl.baseandroid.tools;
 
 import android.content.Context;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 
-import com.sjjd.wyl.baseandroid.utils.LogUtils;
 import com.unisound.client.SpeechConstants;
 import com.unisound.client.SpeechSynthesizer;
 import com.unisound.client.SpeechSynthesizerListener;
@@ -18,24 +15,24 @@ import java.io.InputStream;
 /**
  * Created by wyl on 2019/2/25.
  */
-public class TTSManager {
-    private static final String TAG = "TTSManager";
+public class ToolTts {
+    private static final String TAG = "ToolTts";
     SpeechSynthesizer mTTSPlayer;//呼叫播放
 
-    static TTSManager mTTSManager;
+    static ToolTts mToolTts;
     static Object mObject = new Object();
     static Context mContext;
 
-    public static TTSManager getInstance(Context context) {
+    public static ToolTts getInstance(Context context) {
         mContext = context;
-        if (mTTSManager == null) {
+        if (mToolTts == null) {
             synchronized (mObject) {
-                if (mTTSManager == null) {
-                    mTTSManager = new TTSManager();
+                if (mToolTts == null) {
+                    mToolTts = new ToolTts();
                 }
             }
         }
-        return mTTSManager;
+        return mToolTts;
     }
 
     public SpeechSynthesizer getTTSPlayer() {
@@ -55,20 +52,9 @@ public class TTSManager {
     }
 
 
-    class MyHander extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case 1:
-                    initTts(mContext);
-            }
-        }
-    }
+
 
     public void copyFile() {
-
-        final MyHander mMyHander = new MyHander();
 
         new Thread(new Runnable() {
             @Override
@@ -106,7 +92,6 @@ public class TTSManager {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    mMyHander.sendEmptyMessage(1);
                 }
             }
         }).start();
@@ -163,30 +148,30 @@ public class TTSManager {
                 switch (type) {
                     case SpeechConstants.TTS_EVENT_INIT:
                         // 初始化成功回调
-                        LogUtils.e(TAG, "onEvent: TTS_EVENT_INIT");
+                        ToolLog.e(TAG, "onEvent: TTS_EVENT_INIT");
                         break;
                     case SpeechConstants.TTS_EVENT_SYNTHESIZER_START:
-                        LogUtils.e(TAG, "onEvent: TTS_EVENT_INIT");
+                        ToolLog.e(TAG, "onEvent: TTS_EVENT_SYNTHESIZER_START");
                         // 开始合成回调
                         break;
                     case SpeechConstants.TTS_EVENT_SYNTHESIZER_END:
-                        LogUtils.e(TAG, "onEvent: TTS_EVENT_SYNTHESIZER_END");
+                        ToolLog.e(TAG, "onEvent: TTS_EVENT_SYNTHESIZER_END");
                         // 合成结束回调
                         break;
                     case SpeechConstants.TTS_EVENT_BUFFER_BEGIN:
                         // 开始缓存回调
-                        LogUtils.e(TAG, "onEvent: TTS_EVENT_BUFFER_BEGIN");
+                        ToolLog.e(TAG, "onEvent: TTS_EVENT_BUFFER_BEGIN");
                         break;
                     case SpeechConstants.TTS_EVENT_BUFFER_READY:
                         // 缓存完毕回调
-                        LogUtils.e(TAG, "onEvent: TTS_EVENT_BUFFER_READY");
+                        ToolLog.e(TAG, "onEvent: TTS_EVENT_BUFFER_READY");
                         break;
                     case SpeechConstants.TTS_EVENT_PLAYING_START:
                         // 开始播放回调
-                        LogUtils.e(TAG, "onEvent: TTS_EVENT_PLAYING_START");
+                        ToolLog.e(TAG, "onEvent: TTS_EVENT_PLAYING_START");
                         break;
                     case SpeechConstants.TTS_EVENT_PLAYING_END:
-                        LogUtils.e(TAG, "onEvent: TTS_EVENT_PLAYING_END");
+                        ToolLog.e(TAG, "onEvent: TTS_EVENT_PLAYING_END");
                         break;
                     case SpeechConstants.TTS_EVENT_PAUSE:
                         // 暂停回调
@@ -196,7 +181,7 @@ public class TTSManager {
                         break;
                     case SpeechConstants.TTS_EVENT_STOP:
                         // 停止回调
-                        LogUtils.e(TAG, "onEvent: TTS_EVENT_STOP");
+                        ToolLog.e(TAG, "onEvent: TTS_EVENT_STOP");
                         break;
                     case SpeechConstants.TTS_EVENT_RELEASE:
                         // 释放资源回调
@@ -214,6 +199,6 @@ public class TTSManager {
         });
         // 初始化合成引擎
         int mInit = mTTSPlayer.init("");
-        LogUtils.e(TAG, "initTts: " + mInit);
+        ToolLog.e(TAG, "initTts: " + mInit);
     }
 }
