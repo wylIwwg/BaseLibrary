@@ -1,15 +1,33 @@
 package com.sjjd.wyl.baseandroid.tools;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.view.View;
 
 /**
  * Created by wyl on 2018/11/13.
  */
 public class ToolApp {
+
+    public static void hideBottomUIMenu(Activity context) {
+        //隐藏虚拟按键，并全屏
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            View view = context.getWindow().getDecorView();
+            view.setSystemUiVisibility(View.GONE);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            //for new api versions
+            View decorView = context.getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+
+            decorView.setSystemUiVisibility(uiOptions);
+        }
+    }
 
     //重启应用
     public static void restartApp(Context context) {

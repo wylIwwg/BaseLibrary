@@ -141,10 +141,6 @@ public class TCPSocket {
         if (line.contains(LABEL)) {
             int mIndex = line.indexOf(LABEL);//获取标识符索引
             ToolLog.e(TAG, "【mIndex】 : " + mIndex);
-            // result += line.replace(LABEL, "");
-
-            // result += line.replace(LABEL, "");
-
 
             result += line.substring(0, mIndex);//获取标识符前段字符
             // remainder = line.substring(mIndex, line.length() - 1);//获取标识符后段字符
